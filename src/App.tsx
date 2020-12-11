@@ -9,7 +9,9 @@ import './App.css';
 //Routes
 import HomePage from './pages/HomePage';
 
-const TestPage = lazy(() => import('./pages/TestPage'));
+const TestPage = lazy(
+  () => import(/* webpackChunkName: "test-page" */ './pages/TestPage')
+);
 
 const theme = getTheme();
 
