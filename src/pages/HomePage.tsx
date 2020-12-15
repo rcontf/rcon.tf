@@ -28,10 +28,6 @@ const useStyles = makeStyles(theme => ({
 export default function HomePage() {
   const styles = useStyles();
 
-  const userDetails = useSelector(userSelector)
-
-  console.log(userDetails);
-
   return (
     <Layout>
       <Grid
