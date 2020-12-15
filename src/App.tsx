@@ -13,6 +13,10 @@ const TestPage = lazy(
   () => import(/* webpackChunkName: "test-page" */ './pages/TestPage')
 );
 
+const SuccessPage = lazy(
+  () => import(/* webpackChunkName: "test-page" */ './pages/AuthSuccess')
+);
+
 const theme = getTheme();
 
 function App() {
@@ -24,6 +28,7 @@ function App() {
           <Switch>
             <Route exact path='/' component={HomePage} />
             <Route path='/test' component={TestPage} />
+            <Route path='/success' component={SuccessPage} />
           </Switch>
         </Router>
       </React.Suspense>

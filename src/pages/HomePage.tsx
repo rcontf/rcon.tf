@@ -1,12 +1,13 @@
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
-import React from 'react';
-import { Link } from 'react-router-dom';
 
 import Layout from '../components/Layouts/Layout';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 
-import CustomCommand from "../components/CustomCommand";
+import CustomCommand from '../components/CustomCommand';
+import { useSelector } from 'react-redux';
+import { userSelector } from '../redux/users/userSlice';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,6 +27,10 @@ const useStyles = makeStyles(theme => ({
 
 export default function HomePage() {
   const styles = useStyles();
+
+  const userDetails = useSelector(userSelector)
+
+  console.log(userDetails);
 
   return (
     <Layout>
@@ -66,8 +71,6 @@ export default function HomePage() {
       >
         <CustomCommand />
       </Grid>
-
-
     </Layout>
   );
 }

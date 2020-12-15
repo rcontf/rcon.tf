@@ -17,7 +17,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Header() {
+interface HeaderProps {
+  login: () => void;
+  logout: () => void;
+}
+
+export default function Header({ login, logout }: HeaderProps) {
   const classes = useStyles();
 
   return (
@@ -28,7 +33,9 @@ export default function Header() {
             rcon.tf
           </Typography>
 
-          <Button variant='text'>Login</Button>
+          <Button variant='text' onClick={login}>
+            Login
+          </Button>
         </Toolbar>
       </AppBar>
     </div>
