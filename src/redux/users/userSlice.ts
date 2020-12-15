@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store';
 import axios from 'axios';
 
@@ -14,24 +14,29 @@ const initialState: UserState = {
   id: '',
 };
 
+export const loginUser = createAsyncThunk('users/login', async () => {
+  const { data } = await axios.get<UserData>('/users');
+  return { id: data.id, avatar: data.avatar };
+});
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<UserData>) => {
-      state.avatar = action.payload.avatar
+      state.avatar = action.payload.avatar;
       state.id = action.payload.id;
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(loginUser.fulfilled, (state, { payload }) => {
+      state.id = payload.id;
+      state.avatar = payload.avatar;
+    });
   },
 });
 
 export const { setUser } = userSlice.actions;
-
-export const getUserDetails = (): AppThunk => dispatch => {
-  axios.get<UserData>('/users').then(({ data }) => {
-    dispatch(setUser({ avatar: data.avatar, id: data.id }));
-  });
-};
 
 export const userSelector = (state: RootState) => {
   return state.user;
