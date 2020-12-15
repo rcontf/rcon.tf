@@ -6,8 +6,6 @@ import Layout from '../components/Layouts/Layout';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 
 import CustomCommand from '../components/CustomCommand';
-import { useSelector } from 'react-redux';
-import { userSelector } from '../redux/users/userSlice';
 
 const useStyles = makeStyles(theme => ({
   root: {
