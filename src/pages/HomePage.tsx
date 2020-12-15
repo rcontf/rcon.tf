@@ -1,12 +1,11 @@
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid/Grid';
-import React from 'react';
-import { Link } from 'react-router-dom';
 
 import Layout from '../components/Layouts/Layout';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 
-import CustomCommand from "../components/CustomCommand";
+import CustomCommand from '../components/CustomCommand';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -66,8 +65,6 @@ export default function HomePage() {
       >
         <CustomCommand />
       </Grid>
-
-
     </Layout>
   );
 }

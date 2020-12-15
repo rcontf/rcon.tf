@@ -5,6 +5,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
+import { useSelector } from 'react-redux';
+import { userSelector } from '../../redux/users/userSlice';
+import IconButton from '@material-ui/core/IconButton';
+import { Avatar } from '@material-ui/core';
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -17,8 +22,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Header() {
+interface HeaderProps {
+  login: () => void;
+  logout: () => void;
+}
+
+export default function Header({ login, logout }: HeaderProps) {
   const classes = useStyles();
+
+  const user = useSelector(userSelector);
 
   return (
     <div className={classes.root}>
@@ -28,7 +40,23 @@ export default function Header() {
             rcon.tf
           </Typography>
 
-          <Button variant='text'>Login</Button>
+          {user?.id?.length ? (
+            <div>
+              <IconButton
+                aria-label='account of current user'
+                aria-controls='menu-appbar'
+                aria-haspopup='true'
+                onClick={logout}
+                color='inherit'
+              >
+                <Avatar src={user.avatar} />
+              </IconButton>
+            </div>
+          ) : (
+            <Button variant='text' onClick={login}>
+              Login
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
     </div>
