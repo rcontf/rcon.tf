@@ -14,7 +14,7 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <Header login={login} logout={logout} />
       {children}
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }
