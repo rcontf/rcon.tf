@@ -15,11 +15,11 @@ const TestPage = lazy(
 );
 
 const SuccessPage = lazy(
-  () => import(/* webpackChunkName: "test-page" */ './pages/AuthSuccess')
+  () => import(/* webpackChunkName: "success-page" */ './pages/AuthSuccess')
 );
 
 const DashboardPage = lazy(
-  () => import(/* webpackChunkName: "test-page" */ './pages/DashboardPage')
+  () => import(/* webpackChunkName: "dashboard-page" */ './pages/DashboardPage')
 );
 
 const theme = getTheme();
