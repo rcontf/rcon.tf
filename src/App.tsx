@@ -29,6 +29,7 @@ function App() {
             <Route exact path='/' component={HomePage} />
             <Route path='/test' component={TestPage} />
             <Route path='/success' component={SuccessPage} />
+            <Route path='*' component={HomePage} />
           </Switch>
         </Router>
       </React.Suspense>
