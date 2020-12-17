@@ -2,6 +2,7 @@ import React, { useState, useEffect, FormEvent, useRef } from 'react';
 import Layout from '../components/Layouts/Layout';
 import axios from 'axios';
 import { GetServerResponse } from '../types/types';
+import Server from '../components/Server';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
@@ -26,6 +27,9 @@ const useStyles = makeStyles(theme => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
+  },
+  serverContainer: {
+    width: '60%',
   },
 }));
 
@@ -79,17 +83,26 @@ export default function DashboardPage() {
           container
           justify='center'
           alignItems='center'
+          alignContent='center'
           direction='column'
           spacing={3}
         >
-          <Typography variant='h4'>Select a Server</Typography>
-          <Button variant='outlined' onClick={handleOpen}>
-            Add
-          </Button>
+          <Grid item>
+            <Typography variant='h4'>Select a Server</Typography>
+          </Grid>
+          <Grid item>
+            <Button variant='outlined' onClick={handleOpen}>
+              Add
+            </Button>
+          </Grid>
           {servers &&
             servers.map(server => (
-              <Grid item key={server.hostname}>
-                {server.hostname}
+              <Grid
+                item
+                key={server.hostname}
+                className={classes.serverContainer}
+              >
+                <Server {...server} />
               </Grid>
             ))}
         </Grid>

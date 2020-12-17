@@ -34,7 +34,7 @@ function App() {
             <Route exact path='/' component={HomePage} />
             <Route path='/test' component={TestPage} />
             <Route path='/success' component={SuccessPage} />
-            <ProtectedRoute path="/dashboard">
+            <ProtectedRoute path="/servers">
                 <DashboardPage />
             </ProtectedRoute>
             <Route path='*' component={HomePage} />

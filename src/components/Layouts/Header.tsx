@@ -89,7 +89,7 @@ export default function Header({ login, logout }: HeaderProps) {
 									</Link>
 								</MenuItem>
 								<MenuItem>
-									<Link to="/dashboard" className={classes.menuLink}>
+									<Link to="/servers" className={classes.menuLink}>
 										Servers
 									</Link>
 								</MenuItem>
