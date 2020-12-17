@@ -19,7 +19,7 @@ const SuccessPage = lazy(
 );
 
 const DashboardPage = lazy(
-  () => import(/* webpackChunkName: "dashboard-page" */ './pages/DashboardPage')
+  () => import(/* webpackChunkName: "dashboard-page" */ './pages/ServerPage')
 );
 
 const theme = getTheme();

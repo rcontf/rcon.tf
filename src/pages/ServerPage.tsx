@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DashboardPage() {
+export default function ServerPage() {
   const classes = useStyles();
 
   const [refreshServers, setRefreshServers] = useState<boolean>(false);
