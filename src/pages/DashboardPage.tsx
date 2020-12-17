@@ -86,7 +86,6 @@ export default function DashboardPage() {
   }
 
   async function sendCommand(command: string) {
-    console.log(command);
     await axios.post<ServerExecuteResponse>('/execute', {
       ip: server.info.ip,
       password: server.info.password,
