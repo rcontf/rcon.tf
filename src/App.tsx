@@ -18,8 +18,12 @@ const SuccessPage = lazy(
   () => import(/* webpackChunkName: "success-page" */ './pages/AuthSuccess')
 );
 
+const ServerPage = lazy(
+  () => import(/* webpackChunkName: "server-page" */ './pages/ServerPage')
+);
+
 const DashboardPage = lazy(
-  () => import(/* webpackChunkName: "dashboard-page" */ './pages/ServerPage')
+  () => import(/* webpackChunkName: "dashboard-page" */ './pages/DashboardPage')
 );
 
 const theme = getTheme();
@@ -35,6 +39,9 @@ function App() {
             <Route path='/test' component={TestPage} />
             <Route path='/success' component={SuccessPage} />
             <ProtectedRoute path="/servers">
+                <ServerPage />
+            </ProtectedRoute>
+            <ProtectedRoute path="/dashboard">
                 <DashboardPage />
             </ProtectedRoute>
             <Route path='*' component={HomePage} />
