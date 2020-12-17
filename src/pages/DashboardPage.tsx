@@ -5,8 +5,16 @@ import { RootState } from '../redux/store';
 import axios from 'axios';
 import Player from '../components/Player';
 
-import { Container, Grid, Typography } from '@material-ui/core';
+import {
+  Box,
+  Container,
+  Grid,
+  IconButton,
+  Typography,
+} from '@material-ui/core';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,6 +38,7 @@ interface PlayerObject {
 export default function DashboardPage() {
   const classes = useStyles();
   const server = useSelector((state: RootState) => state.server);
+  const history = useHistory();
 
   const [serverStats, setServerStats] = useState<string>('');
   const [players, setPlayers] = useState<PlayerObject[]>([]);
@@ -53,23 +62,6 @@ export default function DashboardPage() {
     // eslint-disable-next-line
   }, []);
 
-  async function removePlayer(id: string, ban: boolean = false) {
-    if (ban) {
-      await sendCommand(`banid ${id}`);
-    } else {
-      await sendCommand(`kickid ${id}`);
-    }
-  }
-
-  async function sendCommand(command: string) {
-    await axios.post<ServerExecuteResponse>('/execute', {
-      ip: server.info.ip,
-      password: server.info.password,
-      port: server.info.port,
-      command,
-    });
-  }
-
   useEffect(() => {
     axios
       .post<ServerExecuteResponse>('/execute', {
@@ -85,13 +77,38 @@ export default function DashboardPage() {
       .catch(er => console.log('Cannot reach server.\n' + er));
   }, [server.info]);
 
+  async function removePlayer(id: string, ban: boolean = false) {
+    if (ban) {
+      await sendCommand(`banid ${id}`);
+    } else {
+      await sendCommand(`kickid ${id}`);
+    }
+  }
+
+  async function sendCommand(command: string) {
+    console.log(command);
+    await axios.post<ServerExecuteResponse>('/execute', {
+      ip: server.info.ip,
+      password: server.info.password,
+      port: server.info.port,
+      command,
+    });
+  }
+
   return (
     <Layout>
       <Container className={classes.root}>
         <Grid container justify='center' alignItems='center' direction='column'>
-          <Typography variant='h4'>{server.selected}</Typography>
-          
-          <Typography variant='h4' className={classes.root}>Players</Typography>
+          <Box display='flex' justifyContent='center' alignItems='center'>
+            <IconButton onClick={() => history.goBack()}>
+              <ArrowBackIcon />
+            </IconButton>
+            <Typography variant='h4'>{server.selected}</Typography>
+          </Box>
+
+          <Typography variant='h4' className={classes.root}>
+            Players
+          </Typography>
           <Grid container justify='center' alignItems='center' spacing={2}>
             {players.length ? (
               players.map(player => (
@@ -125,7 +142,7 @@ function getPlayers(body: string): PlayerObject[] {
   return players.map(player => {
     const [steamId] = player.match(/\[U:\d{1}:\d+]/g) as string[];
     const [playerName] = player.match(/".+"/g) as string[];
-    const [playerId] = player.match(/\d{1}/) as string[];
+    const [playerId] = player.match(/\d+/) as string[];
     return {
       id: steamId,
       name: playerName.replace(/"/g, ''),
