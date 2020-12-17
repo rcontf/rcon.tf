@@ -16,12 +16,13 @@ import {
   fetchServers,
   serverReducer,
 } from '../redux/servers/serverSlice';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: '5vh',
   },
-  paper: {
+  modal: {
     position: 'absolute',
     width: 400,
     height: 600,
@@ -31,6 +32,7 @@ const useStyles = makeStyles(theme => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
+    outline: 0,
   },
   serverContainer: {
     width: '60%',
@@ -114,7 +116,7 @@ export default function ServerPage() {
           aria-labelledby='simple-modal-title'
           aria-describedby='simple-modal-description'
         >
-          <Paper className={classes.paper}>
+          <Paper className={classes.modal}>
             <h2 id='simple-modal-title'>Add server</h2>
             <form autoComplete='off' onSubmit={handleSubmit}>
               <Grid
@@ -122,7 +124,7 @@ export default function ServerPage() {
                 alignItems='center'
                 justify='center'
                 direction='column'
-                spacing={1}
+                spacing={2}
               >
                 <TextField
                   id='server-hostname'
@@ -154,6 +156,19 @@ export default function ServerPage() {
                   defaultValue={27015}
                   inputRef={serverPort}
                 />
+                <TextField
+                  id='server-type'
+                  select
+                  label='Type of server'
+                  value='tf2'
+                  fullWidth
+                  InputProps={{
+                    readOnly: true,
+                    disabled: true,
+                  }}
+                >
+                  <MenuItem value='tf2'>Team Fortress 2</MenuItem>
+                </TextField>
                 <Grid item>
                   <Button variant='outlined' type='submit'>
                     Add server
