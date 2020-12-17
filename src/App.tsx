@@ -8,13 +8,22 @@ import './App.css';
 
 //Routes
 import HomePage from './pages/HomePage';
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const TestPage = lazy(
   () => import(/* webpackChunkName: "test-page" */ './pages/TestPage')
 );
 
 const SuccessPage = lazy(
-  () => import(/* webpackChunkName: "test-page" */ './pages/AuthSuccess')
+  () => import(/* webpackChunkName: "success-page" */ './pages/AuthSuccess')
+);
+
+const ServerPage = lazy(
+  () => import(/* webpackChunkName: "server-page" */ './pages/ServerPage')
+);
+
+const DashboardPage = lazy(
+  () => import(/* webpackChunkName: "dashboard-page" */ './pages/DashboardPage')
 );
 
 const theme = getTheme();
@@ -29,6 +38,13 @@ function App() {
             <Route exact path='/' component={HomePage} />
             <Route path='/test' component={TestPage} />
             <Route path='/success' component={SuccessPage} />
+            <ProtectedRoute path="/servers">
+                <ServerPage />
+            </ProtectedRoute>
+            <ProtectedRoute path="/dashboard">
+                <DashboardPage />
+            </ProtectedRoute>
+            <Route path='*' component={HomePage} />
           </Switch>
         </Router>
       </React.Suspense>
