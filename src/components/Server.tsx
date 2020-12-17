@@ -6,7 +6,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import { useDispatch } from 'react-redux';
-import { setServer } from '../redux/servers/serverSlice';
+import { setSelection } from '../redux/servers/serverSlice';
 import { useHistory } from 'react-router-dom';
 
 export default function Server(props: GetServerResponse) {
@@ -24,7 +24,7 @@ export default function Server(props: GetServerResponse) {
       <IconButton
         onClick={() => {
           dispatch(
-            setServer({
+            setSelection({
               selected: props.hostname,
               info: {
                 ip: props.ip,
