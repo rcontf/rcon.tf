@@ -17,13 +17,36 @@ interface ServerExecuteResponse {
   body: string;
 }
 
+interface Player {
+  id: string;
+  name: string;
+}
+
 export default function DashboardPage() {
   const classes = useStyles();
   const server = useSelector((state: RootState) => state.server);
 
   const [serverStats, setServerStats] = useState<string>('');
+  const [players, setPlayers] = useState<Player[]>([]);
 
-  const players = getPlayers(serverStats) ?? ["No players"]
+  useEffect(() => {
+    const interval = setInterval(() => {
+      axios
+        .post<ServerExecuteResponse>('/execute', {
+          ip: server.info.ip,
+          password: server.info.password,
+          port: server.info.port,
+          command: 'status',
+        })
+        .then(({ data }) => {
+          setServerStats(data.body.toString());
+          setPlayers(getPlayers(data.body.toString()));
+        })
+        .catch(er => console.log('Cannot reach server.\n' + er));
+      // eslint-disable-next-line
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [server.info]);
 
   useEffect(() => {
     axios
@@ -33,9 +56,11 @@ export default function DashboardPage() {
         port: server.info.port,
         command: 'status',
       })
-      .then(({ data }) => setServerStats(data.body.toString()))
+      .then(({ data }) => {
+        setServerStats(data.body.toString());
+        setPlayers(getPlayers(data.body.toString()));
+      })
       .catch(er => console.log('Cannot reach server.\n' + er));
-      // eslint-disable-next-line
   }, []);
 
   return (
@@ -44,9 +69,11 @@ export default function DashboardPage() {
         <Grid container justify='center' alignItems='center' direction='column'>
           <Grid item>
             <Typography variant='h4'>{server.selected}</Typography>
-            {players.map(player => (
-              <span>{player.name}</span>
-            ))}
+            {players.length ? (
+              players.map(player => <span key={player.id}>{player.name}</span>)
+            ) : (
+              <span>No players</span>
+            )}
           </Grid>
         </Grid>
       </Container>
@@ -54,7 +81,7 @@ export default function DashboardPage() {
   );
 }
 
-function getPlayers(body: string) {
+function getPlayers(body: string): Player[] {
   const playerRegex = body.match(/#.+/g) ?? [];
   const playersAndBots = playerRegex.slice(1);
   const players = playersAndBots.join('\n').match(/.+\[U:\d{1}:\d+].+/g) ?? [];
