@@ -15,7 +15,7 @@ const initialState: UserState = {
 };
 
 export const loginUser = createAsyncThunk('users/login', async () => {
-  const { data } = await axios.get<UserData>('/users');
+  const { data } = await axios.get<UserData>('/api/users');
   return { id: data.id, avatar: data.avatar };
 });
 

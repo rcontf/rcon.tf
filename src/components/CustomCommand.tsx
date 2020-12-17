@@ -45,7 +45,7 @@ export default function CustomCommand() {
     if (!serverCommand || !serverIp || !serverPassword || !serverPort) return;
     else {
       axios
-        .post('/execute', {
+        .post('/api/execute', {
           ip: serverIp!.current!.value,
           password: serverPassword!.current!.value,
           port: parseInt(serverPort!.current!.value) ?? 27015,

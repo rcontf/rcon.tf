@@ -80,7 +80,7 @@ export default function DashboardPage() {
 
     if (!wantToDelete) return;
     axios
-      .delete(`/servers/${server.info.ip}`)
+      .delete(`/api/servers/${server.info.ip}`)
       .then(() => {
         history.goBack();
       })
@@ -105,7 +105,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       axios
-        .post<ServerExecuteResponse>('/execute', {
+        .post<ServerExecuteResponse>('/api/execute', {
           ip: server.info.ip,
           password: server.info.password,
           port: server.info.port,
@@ -123,7 +123,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     axios
-      .post<ServerExecuteResponse>('/execute', {
+      .post<ServerExecuteResponse>('/api/execute', {
         ip: server.info.ip,
         password: server.info.password,
         port: server.info.port,
@@ -145,7 +145,7 @@ export default function DashboardPage() {
   }
 
   async function sendCommand(command: string) {
-    await axios.post<ServerExecuteResponse>('/execute', {
+    await axios.post<ServerExecuteResponse>('/api/execute', {
       ip: server.info.ip,
       password: server.info.password,
       port: server.info.port,
