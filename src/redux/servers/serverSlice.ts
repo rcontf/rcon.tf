@@ -1,17 +1,25 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk, RootState } from '../store';
-import axios from 'axios';
-
-interface ServerState {
-  selected: string;
-}
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 const initialState: ServerState = {
   selected: '',
+  info: { ip: '', password: '', port: 27015 },
 };
+
+interface ServerInformation {
+  ip: string;
+  password: string;
+  port: number;
+}
 
 interface SetServerAction {
   selected: string;
+  info: ServerInformation;
+}
+
+interface ServerState {
+  selected: string;
+  info: ServerInformation;
 }
 
 export const serverSlice = createSlice({
@@ -20,6 +28,7 @@ export const serverSlice = createSlice({
   reducers: {
     setServer: (state, action: PayloadAction<SetServerAction>) => {
       state.selected = action.payload.selected;
+      state.info = action.payload.info;
     },
     getServer: state => {
       //TODO: redux get server information

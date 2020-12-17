@@ -43,6 +43,7 @@ export default function ServerPage() {
   const serverIp = useRef<HTMLInputElement>();
   const serverPassword = useRef<HTMLInputElement>();
   const serverHostname = useRef<HTMLInputElement>();
+  const serverPort = useRef<HTMLInputElement>();
 
   const handleOpen = () => {
     setOpen(true);
@@ -55,13 +56,14 @@ export default function ServerPage() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (!serverHostname || !serverIp || !serverPassword) return;
+    if (!serverHostname || !serverIp || !serverPassword || !serverPort) return;
     else {
       axios
         .post('/servers', {
           hostname: serverHostname!.current!.value,
           ip: serverIp!.current!.value,
           password: serverPassword!.current!.value,
+          port: parseInt(serverPort!.current!.value) ?? 27015,
         })
         .then(() => {
           setRefreshServers(!refreshServers);
@@ -144,6 +146,14 @@ export default function ServerPage() {
                   fullWidth
                   required
                   inputRef={serverPassword}
+                />
+                <TextField
+                  id='server-port'
+                  label='Server port'
+                  fullWidth
+                  type='number'
+                  required
+                  inputRef={serverPort}
                 />
                 <Grid item>
                   <Button variant='outlined' type='submit'>

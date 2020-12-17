@@ -24,8 +24,17 @@ export default function Server(props: GetServerResponse) {
       <IconButton>
         <ArrowForwardIosIcon
           onClick={() => {
-            dispatch(setServer({ selected: props.ip }));
-            history.push('/dashboard')
+            dispatch(
+              setServer({
+                selected: props.hostname,
+                info: {
+                  ip: props.ip,
+                  password: props.password,
+                  port: props.port,
+                },
+              })
+            );
+            history.push('/dashboard');
           }}
         />
       </IconButton>
