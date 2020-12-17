@@ -19,7 +19,7 @@ import {
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
-import { setServer } from '../redux/servers/serverSlice';
+import { editServer } from '../redux/servers/serverSlice';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,7 +57,7 @@ export default function DashboardPage() {
   const server = useSelector((state: RootState) => state.server);
   const history = useHistory();
 
-  const [serverStats, setServerStats] = useState<string>('');
+  const [, setServerStats] = useState<string>('');
   const [players, setPlayers] = useState<PlayerObject[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -90,25 +90,14 @@ export default function DashboardPage() {
     e.preventDefault();
     if (!serverIp || !serverPassword || !serverPort) return;
     else {
-      axios
-        .patch(`/servers/${server.info.ip}`, {
+      dispatch(
+        editServer(server.info.ip, {
+          hostname: serverHostname!.current!.value,
           ip: serverIp!.current!.value,
           password: serverPassword!.current!.value,
           port: parseInt(serverPort!.current!.value),
-          hostname: serverHostname!.current!.value,
         })
-        .then(({ data }) => {
-          dispatch(
-            setServer({
-              selected: serverHostname!.current!.value,
-              info: {
-                ip: serverIp!.current!.value,
-                password: serverPassword!.current!.value,
-                port: parseInt(serverPort!.current!.value),
-              },
-            })
-          );
-        });
+      );
     }
   }
 
@@ -227,15 +216,6 @@ export default function DashboardPage() {
             <h2 id='edit-title'>Edit</h2>
             <form onSubmit={handleSubmit}>
               <TextField
-                id='server-ip'
-                label='Server Ip'
-                style={{ margin: 8 }}
-                fullWidth
-                margin='normal'
-                inputRef={serverIp}
-                defaultValue={server.info.ip}
-              />
-              <TextField
                 id='server-hostname'
                 label='Hostname'
                 style={{ margin: 8 }}
@@ -243,6 +223,15 @@ export default function DashboardPage() {
                 margin='normal'
                 inputRef={serverHostname}
                 defaultValue={server.selected}
+              />
+              <TextField
+                id='server-ip'
+                label='Server Ip'
+                style={{ margin: 8 }}
+                fullWidth
+                margin='normal'
+                inputRef={serverIp}
+                defaultValue={server.info.ip}
               />
               <TextField
                 id='server-rcon-password'
