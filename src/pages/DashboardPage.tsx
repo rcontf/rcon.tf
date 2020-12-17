@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent, useRef } from 'react';
 import Layout from '../components/Layouts/Layout';
 import axios from 'axios';
 import { GetServerResponse } from '../types/types';
@@ -32,8 +32,13 @@ const useStyles = makeStyles(theme => ({
 export default function DashboardPage() {
   const classes = useStyles();
 
+  const [refreshServers, setRefreshServers] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [servers, setServers] = useState<GetServerResponse[]>([]);
+
+  const serverIp = useRef<HTMLInputElement>();
+  const serverPassword = useRef<HTMLInputElement>();
+  const serverHostname = useRef<HTMLInputElement>();
 
   const handleOpen = () => {
     setOpen(true);
@@ -45,14 +50,27 @@ export default function DashboardPage() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log('submitted');
+
+    if (!serverHostname || !serverIp || !serverPassword) return;
+    else {
+      axios
+        .post('/servers', {
+          hostname: serverHostname!.current!.value,
+          ip: serverIp!.current!.value,
+          password: serverPassword!.current!.value,
+        })
+        .then(() => {
+          setRefreshServers(!refreshServers);
+          setOpen(false);
+        });
+    }
   };
 
   useEffect(() => {
     axios.get<GetServerResponse[]>('/servers').then(({ data }) => {
       setServers(data);
     });
-  }, []);
+  }, [refreshServers]);
 
   return (
     <Layout>
@@ -98,13 +116,21 @@ export default function DashboardPage() {
                   helperText='What do you want to call the server?'
                   fullWidth
                   required
+                  inputRef={serverHostname}
                 />
-                <TextField id='server-ip' label='IP' fullWidth required />
+                <TextField
+                  id='server-ip'
+                  label='IP'
+                  fullWidth
+                  required
+                  inputRef={serverIp}
+                />
                 <TextField
                   id='server-password'
                   label='Rcon Password'
                   fullWidth
                   required
+                  inputRef={serverPassword}
                 />
                 <Grid item>
                   <Button variant='outlined' type='submit'>
