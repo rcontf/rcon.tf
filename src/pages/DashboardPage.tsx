@@ -40,12 +40,12 @@ export default function DashboardPage() {
         })
         .then(({ data }) => {
           setServerStats(data.body.toString());
-          setPlayers(getPlayers(data.body.toString()));
+          setPlayers(getPlayers(serverStats));
         })
         .catch(er => console.log('Cannot reach server.\n' + er));
-      // eslint-disable-next-line
     }, 15000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line
   }, [server.info]);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function DashboardPage() {
         setPlayers(getPlayers(data.body.toString()));
       })
       .catch(er => console.log('Cannot reach server.\n' + er));
-  }, []);
+  }, [server.info]);
 
   return (
     <Layout>
