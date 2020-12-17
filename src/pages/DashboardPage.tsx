@@ -79,7 +79,7 @@ export default function DashboardPage() {
 
   async function removePlayer(id: string, ban: boolean = false) {
     if (ban) {
-      await sendCommand(`banid ${id}`);
+      await sendCommand(`banid 0 ${id} kick`);
     } else {
       await sendCommand(`kickid ${id}`);
     }
