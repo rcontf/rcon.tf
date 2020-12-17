@@ -4,6 +4,20 @@ export interface ServerLogs {
   timestamp: number;
 }
 
+export interface AddServerDto {
+  hostname: string;
+  ip: string;
+  port: number;
+  password: string;
+}
+
+export interface EditServerDto {
+  hostname: string;
+  ip: string;
+  port: number;
+  password: string;
+}
+
 export interface GetServerResponse {
   hostname: string;
   ip: string;

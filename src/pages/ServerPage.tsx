@@ -1,7 +1,5 @@
-import React, { useState, useEffect, FormEvent, useRef } from 'react';
+import React, { useState, FormEvent, useRef, useEffect } from 'react';
 import Layout from '../components/Layouts/Layout';
-import axios from 'axios';
-import { GetServerResponse } from '../types/types';
 import Server from '../components/Server';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,6 +10,12 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addServer,
+  fetchServers,
+  serverReducer,
+} from '../redux/servers/serverSlice';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,10 +39,10 @@ const useStyles = makeStyles(theme => ({
 
 export default function ServerPage() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const servers = useSelector(serverReducer);
 
-  const [refreshServers, setRefreshServers] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const [servers, setServers] = useState<GetServerResponse[]>([]);
 
   const serverIp = useRef<HTMLInputElement>();
   const serverPassword = useRef<HTMLInputElement>();
@@ -58,25 +62,20 @@ export default function ServerPage() {
 
     if (!serverHostname || !serverIp || !serverPassword || !serverPort) return;
     else {
-      axios
-        .post('/servers', {
+      dispatch(
+        addServer({
           hostname: serverHostname!.current!.value,
           ip: serverIp!.current!.value,
           password: serverPassword!.current!.value,
           port: parseInt(serverPort!.current!.value) ?? 27015,
         })
-        .then(() => {
-          setRefreshServers(!refreshServers);
-          setOpen(false);
-        });
+      );
     }
   };
 
   useEffect(() => {
-    axios.get<GetServerResponse[]>('/servers').then(({ data }) => {
-      setServers(data);
-    });
-  }, [refreshServers]);
+    dispatch(fetchServers());
+  }, []);
 
   return (
     <Layout>
@@ -97,8 +96,8 @@ export default function ServerPage() {
               Add
             </Button>
           </Grid>
-          {servers &&
-            servers.map(server => (
+          {servers.allServers &&
+            servers.allServers.map(server => (
               <Grid
                 item
                 key={server.hostname}
@@ -152,7 +151,7 @@ export default function ServerPage() {
                   label='Server port'
                   fullWidth
                   type='number'
-                  required
+                  defaultValue={27015}
                   inputRef={serverPort}
                 />
                 <Grid item>
