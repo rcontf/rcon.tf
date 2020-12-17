@@ -21,22 +21,22 @@ export default function Server(props: GetServerResponse) {
       width='100%'
     >
       <Typography variant='h4'>{props.hostname}</Typography>
-      <IconButton>
-        <ArrowForwardIosIcon
-          onClick={() => {
-            dispatch(
-              setServer({
-                selected: props.hostname,
-                info: {
-                  ip: props.ip,
-                  password: props.password,
-                  port: props.port,
-                },
-              })
-            );
-            history.push('/dashboard');
-          }}
-        />
+      <IconButton
+        onClick={() => {
+          dispatch(
+            setServer({
+              selected: props.hostname,
+              info: {
+                ip: props.ip,
+                password: props.password,
+                port: props.port,
+              },
+            })
+          );
+          history.push('/dashboard');
+        }}
+      >
+        <ArrowForwardIosIcon />
       </IconButton>
     </Box>
   );

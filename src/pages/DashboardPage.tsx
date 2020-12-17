@@ -90,6 +90,8 @@ export default function DashboardPage() {
       <Container className={classes.root}>
         <Grid container justify='center' alignItems='center' direction='column'>
           <Typography variant='h4'>{server.selected}</Typography>
+          
+          <Typography variant='h4' className={classes.root}>Players</Typography>
           <Grid container justify='center' alignItems='center' spacing={2}>
             {players.length ? (
               players.map(player => (

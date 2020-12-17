@@ -3,6 +3,7 @@ import React from 'react';
 import { Box, IconButton, Tooltip, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 
 interface PlayerProps {
   id: string;
@@ -12,20 +13,33 @@ interface PlayerProps {
   ban: (id: string, ban: boolean) => Promise<void>;
 }
 
+const useStyles = makeStyles(theme => ({
+  text: {
+    marginRight: 25,
+  },
+}));
+
 export default function Player(props: PlayerProps) {
+  const classes = useStyles();
   return (
-    <Box justifyContent='space-between' alignItems='center'>
-      <Typography variant='h6'>{props.name}</Typography>
-      <Tooltip title='Kick player'>
-        <IconButton onClick={async () => await props.kick(props.playerId)}>
-          <DeleteIcon fontSize='small' />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title='Ban player'>
-        <IconButton onClick={async () => await props.ban(props.playerId, true)}>
-          <BlockIcon fontSize='small' />
-        </IconButton>
-      </Tooltip>
+    <Box justifyContent='space-between' alignItems='center' width='100%'>
+      <Typography variant='h6' display='inline'>
+        {props.name}
+      </Typography>
+      <span className={classes.text}>
+        <Tooltip title='Kick player'>
+          <IconButton onClick={async () => await props.kick(props.playerId)}>
+            <DeleteIcon fontSize='small' />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title='Ban player'>
+          <IconButton
+            onClick={async () => await props.ban(props.playerId, true)}
+          >
+            <BlockIcon fontSize='small' />
+          </IconButton>
+        </Tooltip>
+      </span>
     </Box>
   );
 }
