@@ -7,9 +7,11 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import { useDispatch } from 'react-redux';
 import { setServer } from '../redux/servers/serverSlice';
+import { useHistory } from 'react-router-dom';
 
 export default function Server(props: GetServerResponse) {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   return (
     <Box
@@ -21,7 +23,10 @@ export default function Server(props: GetServerResponse) {
       <Typography variant='h4'>{props.hostname}</Typography>
       <IconButton>
         <ArrowForwardIosIcon
-          onClick={() => dispatch(setServer({ selected: props.ip }))}
+          onClick={() => {
+            dispatch(setServer({ selected: props.ip }));
+            history.push('/dashboard')
+          }}
         />
       </IconButton>
     </Box>
