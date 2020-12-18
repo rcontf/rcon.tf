@@ -7,8 +7,8 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const login = () => (window.location.href = 'http://localhost:8080/api/auth/steam');
-  const logout = () => (window.location.href = 'http://localhost:8080/api/auth/logout');
+  const login = () => window.location.replace('/api/auth/steam');
+  const logout = () => window.location.replace('/api/auth/logout');
 
   return (
     <>
