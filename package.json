@@ -23,10 +23,12 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "redux-thunk": "^2.3.0",
+    "serve": "^11.3.2",
     "steamid": "^1.1.3",
     "typescript": "~3.8.2"
   },
   "scripts": {
+    "prod": "serve -s build -l $PORT -n",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
