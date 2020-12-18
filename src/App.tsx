@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import React, { lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import { CssBaseline } from '@material-ui/core';
@@ -9,6 +9,8 @@ import './App.css';
 //Routes
 import HomePage from './pages/HomePage';
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useDispatch } from 'react-redux';
+import { loginUser } from './redux/users/userSlice';
 
 const TestPage = lazy(
   () => import(/* webpackChunkName: "test-page" */ './pages/TestPage')
@@ -29,6 +31,13 @@ const DashboardPage = lazy(
 const theme = getTheme();
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loginUser());
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
