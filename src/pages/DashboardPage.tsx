@@ -144,7 +144,11 @@ export default function DashboardPage() {
     }
   }
 
-  async function sendCommand(command: string) {
+  async function sendCommand(command: string, showDialog: boolean = false) {
+    if (showDialog) {
+      const doCommand = window.confirm('Really send this command?');
+      if (!doCommand) return;
+    }
     await axios.post<ServerExecuteResponse>('/api/execute', {
       ip: server.info.ip,
       password: server.info.password,
@@ -191,21 +195,42 @@ export default function DashboardPage() {
           <Typography variant='h4' className={classes.root}>
             Server Controls
           </Typography>
-          <Button
-            variant='outlined'
-            onClick={async () => await sendCommand('_restart')}
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            gridGap={10}
           >
-            Restart Server
-          </Button>
+            <Button
+              variant='outlined'
+              onClick={async () => await sendCommand('_restart', true)}
+            >
+              Restart Server
+            </Button>
+            <Button
+              variant='outlined'
+              onClick={async () => await sendCommand('kickall', true)}
+            >
+              Kick all
+            </Button>
+          </Box>
+
           <Typography variant='h4' className={classes.root}>
             Settings
           </Typography>
-          <Button variant='outlined' onClick={() => handleDelete()}>
-            Delete
-          </Button>
-          <Button variant='outlined' onClick={() => handleOpen()}>
-            Edit
-          </Button>
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            gridGap={10}
+          >
+            <Button variant='outlined' onClick={() => handleDelete()}>
+              Delete
+            </Button>
+            <Button variant='outlined' onClick={() => handleOpen()}>
+              Edit
+            </Button>
+          </Box>
         </Grid>
         <Modal
           open={open}
