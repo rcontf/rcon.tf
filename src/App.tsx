@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import getTheme from './themes/theme';
+import Loader from "./components/Loader";
 import './App.css';
 
 //Routes
@@ -11,10 +12,6 @@ import HomePage from './pages/HomePage';
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useDispatch } from 'react-redux';
 import { loginUser } from './redux/users/userSlice';
-
-const TestPage = lazy(
-  () => import(/* webpackChunkName: "test-page" */ './pages/TestPage')
-);
 
 const SuccessPage = lazy(
   () => import(/* webpackChunkName: "success-page" */ './pages/AuthSuccess')
@@ -41,11 +38,10 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <React.Suspense fallback={<span>Loading</span>}>
+      <React.Suspense fallback={<Loader />}>
         <Router>
           <Switch>
             <Route exact path='/' component={HomePage} />
-            <Route path='/test' component={TestPage} />
             <Route path='/success' component={SuccessPage} />
             <ProtectedRoute path="/servers">
                 <ServerPage />
