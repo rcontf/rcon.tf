@@ -16,22 +16,16 @@ interface ServerInformation {
   ip: string;
   password: string;
   port: number;
-}
-
-interface SetSelectionAction {
-  selected: string;
-  info: ServerInformation;
+  hostname: string;
 }
 
 interface ServerState {
-  selected: string;
-  info: ServerInformation;
+  selected: ServerInformation;
   allServers: GetServerResponse[];
 }
 
 const initialState: ServerState = {
-  selected: '',
-  info: { ip: '', password: '', port: 27015 },
+  selected: { ip: '', password: '', port: 27015, hostname: '' },
   allServers: [],
 };
 
@@ -39,9 +33,8 @@ export const serverSlice = createSlice({
   name: 'server',
   initialState,
   reducers: {
-    setSelection: (state, action: PayloadAction<SetSelectionAction>) => {
-      state.selected = action.payload.selected;
-      state.info = action.payload.info;
+    setSelection: (state, action: PayloadAction<ServerInformation>) => {
+      state.selected = action.payload;
     },
     addServerSuccess: (state, action: PayloadAction<GetServerResponse>) => {
       state.allServers.push(action.payload);
@@ -102,15 +95,8 @@ export const editServer = (
   dto: EditServerDto
 ): AppThunk => async dispatch => {
   try {
-    //TODO: api response should send the updated UI, so I can just edit that rather than fetching again
+    dispatch(setSelection(dto));
     await editUserServer(ip, dto);
-    dispatch(fetchServers());
-    dispatch(
-      setSelection({
-        info: dto,
-        selected: dto.hostname,
-      })
-    );
   } catch (err) {
     dispatch(getAllServersFailure(err.toString()));
   }

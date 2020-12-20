@@ -8,6 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { useDispatch } from 'react-redux';
 import { setSelection } from '../redux/servers/serverSlice';
 import { useHistory } from 'react-router-dom';
+import { Tooltip } from '@material-ui/core';
 
 export default function Server(props: GetServerResponse) {
   const dispatch = useDispatch();
@@ -20,17 +21,17 @@ export default function Server(props: GetServerResponse) {
       justifyContent='space-between'
       width='100%'
     >
-      <Typography variant='h4'>{props.hostname}</Typography>
+      <Tooltip title={`IP: ${props.ip}`} interactive>
+        <Typography variant='h4'>{props.hostname}</Typography>
+      </Tooltip>
       <IconButton
         onClick={() => {
           dispatch(
             setSelection({
-              selected: props.hostname,
-              info: {
-                ip: props.ip,
-                password: props.password,
-                port: props.port,
-              },
+              hostname: props.hostname,
+              ip: props.ip,
+              password: props.password,
+              port: props.port,
             })
           );
           history.push('/dashboard');

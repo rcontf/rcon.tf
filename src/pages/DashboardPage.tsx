@@ -80,7 +80,7 @@ export default function DashboardPage() {
 
     if (!wantToDelete) return;
     axios
-      .delete(`/api/servers/${server.info.ip}`)
+      .delete(`/api/servers/${server.selected.ip}`)
       .then(() => {
         history.goBack();
       })
@@ -92,7 +92,7 @@ export default function DashboardPage() {
     if (!serverIp || !serverPassword || !serverPort) return;
     else {
       dispatch(
-        editServer(server.info.ip, {
+        editServer(server.selected.ip, {
           hostname: serverHostname!.current!.value,
           ip: serverIp!.current!.value,
           password: serverPassword!.current!.value,
@@ -106,9 +106,9 @@ export default function DashboardPage() {
     const interval = setInterval(() => {
       axios
         .post<ServerExecuteResponse>('/api/execute', {
-          ip: server.info.ip,
-          password: server.info.password,
-          port: server.info.port,
+          ip: server.selected.ip,
+          password: server.selected.password,
+          port: server.selected.port,
           command: 'status',
         })
         .then(({ data }) => {
@@ -124,9 +124,9 @@ export default function DashboardPage() {
   useEffect(() => {
     axios
       .post<ServerExecuteResponse>('/api/execute', {
-        ip: server.info.ip,
-        password: server.info.password,
-        port: server.info.port,
+        ip: server.selected.ip,
+        password: server.selected.password,
+        port: server.selected.port,
         command: 'status',
       })
       .then(({ data }) => {
@@ -134,7 +134,7 @@ export default function DashboardPage() {
         setPlayers(getPlayers(data.body.toString()));
       })
       .catch(er => console.log('Cannot reach server.\n' + er));
-  }, [server.info]);
+  }, [server.selected]);
 
   async function removePlayer(id: string, ban: boolean = false) {
     if (ban) {
@@ -150,9 +150,9 @@ export default function DashboardPage() {
       if (!doCommand) return;
     }
     await axios.post<ServerExecuteResponse>('/api/execute', {
-      ip: server.info.ip,
-      password: server.info.password,
-      port: server.info.port,
+      ip: server.selected.ip,
+      password: server.selected.password,
+      port: server.selected.port,
       command,
     });
   }
@@ -165,7 +165,7 @@ export default function DashboardPage() {
             <IconButton onClick={() => history.goBack()}>
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant='h4'>{server.selected}</Typography>
+            <Typography variant='h4'>{server.selected.hostname}</Typography>
           </Box>
 
           <Typography variant='h4' className={classes.root}>
@@ -248,7 +248,7 @@ export default function DashboardPage() {
                 fullWidth
                 margin='normal'
                 inputRef={serverHostname}
-                defaultValue={server.selected}
+                defaultValue={server.selected.hostname}
               />
               <TextField
                 id='server-ip'
@@ -257,7 +257,7 @@ export default function DashboardPage() {
                 fullWidth
                 margin='normal'
                 inputRef={serverIp}
-                defaultValue={server.info.ip}
+                defaultValue={server.selected.ip}
               />
               <TextField
                 id='server-rcon-password'
@@ -266,7 +266,7 @@ export default function DashboardPage() {
                 fullWidth
                 margin='normal'
                 inputRef={serverPassword}
-                defaultValue={server.info.password}
+                defaultValue={server.selected.password}
               />
               <TextField
                 id='server-rcon-port'
@@ -276,7 +276,7 @@ export default function DashboardPage() {
                 type='number'
                 margin='normal'
                 inputRef={serverPort}
-                defaultValue={server.info.port}
+                defaultValue={server.selected.port}
               />
 
               <Button variant='text' type='submit'>
