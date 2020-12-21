@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/Layouts/Layout';
-import { RootState } from '../redux/store';
 import axios from 'axios';
-import Player from '../components/Player';
+import { useHistory } from 'react-router-dom';
+import { editServer, serverReducer } from '../redux/servers/serverSlice';
+import SteamId from 'steamid';
 
 import {
   Box,
@@ -15,11 +16,19 @@ import {
   Paper,
   TextField,
   Typography,
+  TableCell,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableBody,
+  Tooltip,
 } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import BlockIcon from '@material-ui/icons/Block';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { useHistory } from 'react-router-dom';
-import { editServer } from '../redux/servers/serverSlice';
+import { deleteUserServer } from '../redux/servers/serverApi';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,6 +49,9 @@ const useStyles = makeStyles(theme => ({
     transform: 'translate(-50%, -50%)',
     outline: 0,
   },
+  table: {
+    minWidth: 650,
+  },
 }));
 
 interface ServerExecuteResponse {
@@ -57,7 +69,7 @@ interface PlayerObject {
 export default function DashboardPage() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const server = useSelector((state: RootState) => state.server);
+  const server = useSelector(serverReducer);
   const history = useHistory();
 
   const [, setServerStats] = useState<string>('');
@@ -81,12 +93,7 @@ export default function DashboardPage() {
     const wantToDelete = window.confirm('Do you want to delete this server?');
 
     if (!wantToDelete) return;
-    axios
-      .delete(`/api/servers/${server.selected.ip}`)
-      .then(() => {
-        history.goBack();
-      })
-      .catch(er => console.log('Cannot reach server.\n' + er));
+    dispatch(deleteUserServer(server.selected.ip)).then(() => history.goBack());
   };
 
   function handleSubmit(e: React.FormEvent) {
@@ -173,27 +180,68 @@ export default function DashboardPage() {
           <Typography variant='h4' className={classes.root}>
             Players
           </Typography>
-          <Grid container justify='center' alignItems='center' spacing={2}>
-            {players.length ? (
-              players.map(player => (
-                <Grid item xs={2} key={player.id}>
-                  <Player
-                    id={player.id}
-                    playerId={player.playerId}
-                    name={player.name}
-                    kick={removePlayer}
-                    ban={removePlayer}
-                  />
-                </Grid>
-              ))
-            ) : (
-              <Grid item>
-                <Typography variant='h6' className={classes.root}>
-                  No players
-                </Typography>
-              </Grid>
-            )}
-          </Grid>
+
+          {players.length ? (
+            <TableContainer component={Paper} className={classes.root}>
+              <Table
+                className={classes.table}
+                aria-label='list of players'
+                size='small'
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell align='right'>Steam ID</TableCell>
+                    <TableCell align='right'>Connected Time</TableCell>
+                    <TableCell align='right'>Ping</TableCell>
+                    <TableCell />
+                    <TableCell />
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {players.map(player => (
+                    <TableRow key={player.playerId}>
+                      <TableCell component='th' scope='row'>
+                        {player.name}
+                      </TableCell>
+                      <TableCell align='right'>
+                        {new SteamId(player.id).getSteamID64()}
+                      </TableCell>
+                      <TableCell align='right'>{player.connected}</TableCell>
+                      <TableCell align='right'>{player.ping}</TableCell>
+                      <TableCell align='right'>
+                        {' '}
+                        <Tooltip title='Kick player'>
+                          <IconButton
+                            onClick={async () =>
+                              await removePlayer(player.playerId)
+                            }
+                          >
+                            <DeleteIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell align='right'>
+                        {' '}
+                        <Tooltip title='Ban player'>
+                          <IconButton
+                            onClick={async () =>
+                              await removePlayer(player.playerId, true)
+                            }
+                          >
+                            <BlockIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant='h6'>No players</Typography>
+          )}
+
           <Typography variant='h4' className={classes.root}>
             Server Controls
           </Typography>
