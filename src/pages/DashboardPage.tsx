@@ -208,7 +208,7 @@ export default function DashboardPage() {
                       </TableCell>
                       <TableCell align='right'>{player.connected}</TableCell>
                       <TableCell align='right'>{player.ping}</TableCell>
-                      <TableCell align='right'>
+                      <TableCell align='center'>
                         {' '}
                         <Tooltip title='Kick player'>
                           <IconButton
@@ -220,7 +220,7 @@ export default function DashboardPage() {
                           </IconButton>
                         </Tooltip>
                       </TableCell>
-                      <TableCell align='right'>
+                      <TableCell align='center'>
                         {' '}
                         <Tooltip title='Ban player'>
                           <IconButton
