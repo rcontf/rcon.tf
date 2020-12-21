@@ -50,6 +50,8 @@ interface PlayerObject {
   id: string;
   name: string;
   playerId: string;
+  ping: string;
+  connected: string;
 }
 
 export default function DashboardPage() {
@@ -138,7 +140,7 @@ export default function DashboardPage() {
 
   async function removePlayer(id: string, ban: boolean = false) {
     if (ban) {
-      await sendCommand(`banid 0 ${id} kick`);
+      await sendCommand(`banid 10 ${id} kick`);
     } else {
       await sendCommand(`kickid ${id}`);
     }
@@ -301,13 +303,17 @@ function getPlayers(body: string): PlayerObject[] {
   if (!players.length) return [];
 
   return players.map(player => {
-    const [steamId] = player.match(/\[U:\d{1}:\d+]/g) as string[];
-    const [playerName] = player.match(/".+"/g) as string[];
-    const [playerId] = player.match(/\d+/) as string[];
+    const playerDetailsArrayRaw = player.match(/\S+/g) as string[];
+    const playerDetails = playerDetailsArrayRaw.map(string =>
+      string.replace(/"/g, '')
+    );
+
     return {
-      id: steamId,
-      name: playerName.replace(/"/g, ''),
-      playerId,
+      playerId: playerDetails[1],
+      name: playerDetails[2],
+      id: playerDetails[3],
+      connected: playerDetails[4],
+      ping: playerDetails[5],
     };
   });
 }
