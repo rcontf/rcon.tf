@@ -127,8 +127,7 @@ export default function DashboardPage() {
         .catch(er => console.log('Cannot reach server.\n' + er));
     }, 10000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line
-  }, []);
+  }, [server.selected]);
 
   useEffect(() => {
     axios
