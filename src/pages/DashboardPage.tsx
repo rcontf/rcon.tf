@@ -354,7 +354,7 @@ function getPlayers(body: string): PlayerObject[] {
   if (!players.length) return [];
 
   return players.map(player => {
-    const playerDetailsArrayRaw = player.match(/\S+/g) as string[];
+    const playerDetailsArrayRaw = player.match(/[^\s"']+|"([^"]*)"|'([^']*)'/g) as string[];
     const playerDetails = playerDetailsArrayRaw.map(string =>
       string.replace(/"/g, '')
     );
