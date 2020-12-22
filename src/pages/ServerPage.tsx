@@ -77,7 +77,7 @@ export default function ServerPage() {
 
   useEffect(() => {
     dispatch(fetchServers());
-  }, []);
+  }, [dispatch]);
 
   return (
     <Layout>
