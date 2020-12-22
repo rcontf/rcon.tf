@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/Layouts/Layout';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { editServer, serverReducer } from '../redux/servers/serverSlice';
+import {
+  deleteServer,
+  editServer,
+  serverReducer,
+} from '../redux/servers/serverSlice';
 import SteamId from 'steamid';
 
 import {
@@ -28,7 +32,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { deleteUserServer } from '../redux/servers/serverApi';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -93,7 +96,8 @@ export default function DashboardPage() {
     const wantToDelete = window.confirm('Do you want to delete this server?');
 
     if (!wantToDelete) return;
-    dispatch(deleteUserServer(server.selected.ip)).then(() => history.goBack());
+    dispatch(deleteServer(server.selected.ip));
+    history.goBack();
   };
 
   function handleSubmit(e: React.FormEvent) {
