@@ -91,6 +91,11 @@ export default function Header({ login, logout }: HeaderProps) {
                   </Link>
                 </MenuItem>
                 <MenuItem>
+                  <Link to='/profile' className={classes.menuLink}>
+                    Profile
+                  </Link>
+                </MenuItem>
+                <MenuItem>
                   <Link to='/servers' className={classes.menuLink}>
                     Servers
                   </Link>

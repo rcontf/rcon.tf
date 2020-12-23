@@ -4,11 +4,11 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import getTheme from './themes/theme';
-import Loader from "./components/Loader";
+import Loader from './components/Loader';
 
 //Routes
 import HomePage from './pages/HomePage';
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from './components/ProtectedRoute';
 import { useDispatch } from 'react-redux';
 import { loginUser } from './redux/users/userSlice';
 
@@ -22,6 +22,10 @@ const ServerPage = lazy(
 
 const DashboardPage = lazy(
   () => import(/* webpackChunkName: "dashboard-page" */ './pages/DashboardPage')
+);
+
+const ProfilePage = lazy(
+  () => import(/* webpackChunkName: "profile-page" */ './pages/ProfilePage')
 );
 
 const theme = getTheme();
@@ -42,11 +46,14 @@ function App() {
           <Switch>
             <Route exact path='/' component={HomePage} />
             <Route path='/success' component={SuccessPage} />
-            <ProtectedRoute path="/servers">
-                <ServerPage />
+            <ProtectedRoute path='/servers'>
+              <ServerPage />
             </ProtectedRoute>
-            <ProtectedRoute path="/dashboard">
-                <DashboardPage />
+            <ProtectedRoute path='/dashboard'>
+              <DashboardPage />
+            </ProtectedRoute>
+            <ProtectedRoute path='/profile'>
+              <ProfilePage />
             </ProtectedRoute>
             <Route path='*' component={HomePage} />
           </Switch>
