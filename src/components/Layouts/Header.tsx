@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../redux/users/userSlice';
 import IconButton from '@material-ui/core/IconButton';
-import { Avatar } from '@material-ui/core';
+import { Avatar, Link as StyledLink } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Link } from 'react-router-dom';
@@ -24,9 +24,9 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   menuLink: {
-    color: "#FFF",
-    textDecoration: "none",
-  }
+    color: '#FFF',
+    textDecoration: 'none',
+  },
 }));
 
 interface HeaderProps {
@@ -39,9 +39,9 @@ export default function Header({ login, logout }: HeaderProps) {
 
   const user = useSelector(userSelector);
 
-	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const handleMenuOpen  = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -54,25 +54,27 @@ export default function Header({ login, logout }: HeaderProps) {
       <AppBar position='static'>
         <Toolbar>
           <Typography variant='h6' className={classes.title}>
-            rcon.tf
+            <StyledLink href='/' color='inherit'>
+              rcon.tf
+            </StyledLink>
           </Typography>
 
           {user?.id?.length ? (
-						<>
+            <>
               <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
+                aria-label='account of current user'
+                aria-controls='menu-appbar'
+                aria-haspopup='true'
                 onClick={handleMenuOpen}
-                color="inherit"
+                color='inherit'
               >
-                 <Avatar src={user.avatar} />
+                <Avatar src={user.avatar} />
               </IconButton>
-							<Menu
-								id="simple-menu"
-								anchorEl={anchorEl}
-								keepMounted
-								open={Boolean(anchorEl)}
+              <Menu
+                id='simple-menu'
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
                 anchorOrigin={{
                   vertical: 'top',
@@ -82,20 +84,20 @@ export default function Header({ login, logout }: HeaderProps) {
                   vertical: 'top',
                   horizontal: 'right',
                 }}
-							>
-								<MenuItem>
-									<Link to="/" className={classes.menuLink}>
-										Home
-									</Link>
-								</MenuItem>
-								<MenuItem>
-									<Link to="/servers" className={classes.menuLink}>
-										Servers
-									</Link>
-								</MenuItem>
-								<MenuItem onClick={() => logout()}>Logout</MenuItem>
-							</Menu>
-						</>
+              >
+                <MenuItem>
+                  <Link to='/' className={classes.menuLink}>
+                    Home
+                  </Link>
+                </MenuItem>
+                <MenuItem>
+                  <Link to='/servers' className={classes.menuLink}>
+                    Servers
+                  </Link>
+                </MenuItem>
+                <MenuItem onClick={() => logout()}>Logout</MenuItem>
+              </Menu>
+            </>
           ) : (
             <Button variant='text' onClick={login}>
               Login
