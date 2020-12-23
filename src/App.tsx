@@ -5,7 +5,6 @@ import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import getTheme from './themes/theme';
 import Loader from "./components/Loader";
-import './App.css';
 
 //Routes
 import HomePage from './pages/HomePage';
