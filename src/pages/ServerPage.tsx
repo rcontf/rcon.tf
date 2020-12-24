@@ -28,6 +28,11 @@ const useStyles = makeStyles(theme => ({
   serverContainer: {
     width: '60%',
   },
+  formInputs: {
+    '& > *': {
+      marginTop: theme.spacing(2),
+    },
+  },
 }));
 
 export default function ServerPage() {
@@ -113,7 +118,11 @@ export default function ServerPage() {
             <DialogContentText id='alert-dialog-description'>
               Save your server for easy access and management.
             </DialogContentText>
-            <form id='add-server-form' onSubmit={formik.handleSubmit}>
+            <form
+              id='add-server-form'
+              onSubmit={formik.handleSubmit}
+              className={classes.formInputs}
+            >
               <TextField
                 id='server-hostname'
                 name='server-hostname'
