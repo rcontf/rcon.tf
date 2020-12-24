@@ -164,6 +164,7 @@ export default function ServerPage() {
                 onChange={e =>
                   formik.setFieldValue('port', parseInt(e.target.value))
                 }
+                helperText='Default value for Source games are usually 27015'
               />
             </form>
           </DialogContent>
