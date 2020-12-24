@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/Layouts/Layout';
 import { userSelector } from '../redux/users/userSlice';
-import { editServer, serverReducer } from '../redux/servers/serverSlice';
+import {
+  deleteServer,
+  editServer,
+  serverReducer,
+} from '../redux/servers/serverSlice';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Avatar,
@@ -47,7 +51,7 @@ export default function ProfilePage() {
   const user = useSelector(userSelector);
   const servers = useSelector(serverReducer);
 
-  const [deleteServer, setDeleteServer] = useState(false);
+  const [deleteServerOpen, setDeleteServerOpen] = useState(false);
   const [editServerOpen, setEditServerOpen] = useState(false);
 
   const [editServerDetails, setEditServerDetails] = useState<GetServerResponse>(
@@ -70,22 +74,27 @@ export default function ProfilePage() {
       port: editServerDetails.port,
     },
     enableReinitialize: true,
-    onSubmit: values => handleEditServer(values.ip, values),
+    onSubmit: values => handleEditServer(editServerDetails.ip, values),
   });
 
-  const handleDeleteServer = () => {
-    //handle delete
+  const handleDeleteServer = (ip: string) => {
+    dispatch(deleteServer(ip));
+    setDeleteServerOpen(false);
   };
 
   const handleEditServer = (ip: string, server: EditServerDto) => {
-    console.log(ip, server);
-    // dispatch(editServer(ip, server));
-    // setEditServerOpen(false);
+    dispatch(editServer(ip, server));
+    setEditServerOpen(false);
   };
 
-  const handleOpeneditServerOpen = (server: GetServerResponse) => {
+  const handleEditServerOpen = (server: GetServerResponse) => {
     setEditServerDetails(server);
     setEditServerOpen(true);
+  };
+
+  const handleDeleteServerOpen = (server: GetServerResponse) => {
+    setEditServerDetails(server);
+    setDeleteServerOpen(true);
   };
 
   return (
@@ -118,7 +127,7 @@ export default function ProfilePage() {
                     <TableCell align='center'>
                       <Tooltip title='Edit Details'>
                         <IconButton
-                          onClick={() => handleOpeneditServerOpen(server)}
+                          onClick={() => handleEditServerOpen(server)}
                         >
                           <EditIcon fontSize='small' />
                         </IconButton>
@@ -126,7 +135,9 @@ export default function ProfilePage() {
                     </TableCell>
                     <TableCell align='center'>
                       <Tooltip title='Remove Server'>
-                        <IconButton onClick={() => setDeleteServer(true)}>
+                        <IconButton
+                          onClick={() => handleDeleteServerOpen(server)}
+                        >
                           <DeleteIcon fontSize='small' />
                         </IconButton>
                       </Tooltip>
@@ -140,8 +151,8 @@ export default function ProfilePage() {
       </Container>
 
       <Dialog
-        open={deleteServer}
-        onClose={() => setDeleteServer(false)}
+        open={deleteServerOpen}
+        onClose={() => setDeleteServerOpen(false)}
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
@@ -153,11 +164,11 @@ export default function ProfilePage() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteServer(false)} color='primary'>
+          <Button onClick={() => setDeleteServerOpen(false)} color='primary'>
             Cancel
           </Button>
           <Button
-            onClick={() => setDeleteServer(false)}
+            onClick={() => handleDeleteServer(editServerDetails.ip)}
             color='primary'
             autoFocus
           >
@@ -173,7 +184,7 @@ export default function ProfilePage() {
         aria-describedby='alert-dialog-description'
       >
         <DialogTitle id='alert-dialog-title'>Edit this server</DialogTitle>
-        <DialogContent>
+        <DialogContent dividers>
           <DialogContentText id='alert-dialog-description'>
             Here you may edit your server details.
           </DialogContentText>
