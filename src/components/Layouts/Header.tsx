@@ -54,7 +54,7 @@ export default function Header({ login, logout }: HeaderProps) {
       <AppBar position='static'>
         <Toolbar>
           <Typography variant='h6' className={classes.title}>
-            <StyledLink href='/' color='inherit'>
+            <StyledLink to='/' color='inherit' component={Link}>
               rcon.tf
             </StyledLink>
           </Typography>

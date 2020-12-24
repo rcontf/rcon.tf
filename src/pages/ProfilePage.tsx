@@ -36,12 +36,20 @@ import { EditServerDto, GetServerResponse } from '../types/types';
 import { useFormik } from 'formik';
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    '& > *': {
+      margin: theme.spacing(4),
+    },
+  },
   avatar: {
-    height: 150,
-    width: 150,
+    height: 125,
+    width: 125,
   },
   table: {
     minWidth: '35vw',
+  },
+  username: {
+    marginLeft: theme.spacing(2),
   },
 }));
 
@@ -99,54 +107,60 @@ export default function ProfilePage() {
 
   return (
     <Layout>
-      <Container>
-        <Box flexDirection='row'>
+      <Container className={classes.root}>
+        <Box display='flex' alignItems='center'>
           <Avatar
             alt="user's profile picture"
             src={user.avatar}
             className={classes.avatar}
           />
-          <Typography variant='h4'>{user.name}</Typography>
+          <Typography variant='h4' className={classes.username}>
+            {user.name}
+          </Typography>
         </Box>
-        <Box justifyContent='center' alignItems='center'>
-          <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label='list of players'>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Alias</TableCell>
-                  <TableCell align='center'>Edit</TableCell>
-                  <TableCell align='center'>Delete</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {servers.allServers.map(server => (
-                  <TableRow key={server.ip}>
-                    <TableCell component='th' scope='row'>
-                      {server.hostname}
-                    </TableCell>
-                    <TableCell align='center'>
-                      <Tooltip title='Edit Details'>
-                        <IconButton
-                          onClick={() => handleEditServerOpen(server)}
-                        >
-                          <EditIcon fontSize='small' />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell align='center'>
-                      <Tooltip title='Remove Server'>
-                        <IconButton
-                          onClick={() => handleDeleteServerOpen(server)}
-                        >
-                          <DeleteIcon fontSize='small' />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
+        <Box display='flex' justifyContent='center' alignItems='center'>
+          {servers.allServers.length ? (
+            <TableContainer component={Paper}>
+              <Table className={classes.table} aria-label='list of players'>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Alias</TableCell>
+                    <TableCell align='center'>Edit</TableCell>
+                    <TableCell align='center'>Delete</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {servers.allServers.map(server => (
+                    <TableRow key={server.ip}>
+                      <TableCell component='th' scope='row'>
+                        {server.hostname}
+                      </TableCell>
+                      <TableCell align='center'>
+                        <Tooltip title='Edit Details'>
+                          <IconButton
+                            onClick={() => handleEditServerOpen(server)}
+                          >
+                            <EditIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell align='center'>
+                        <Tooltip title='Remove Server'>
+                          <IconButton
+                            onClick={() => handleDeleteServerOpen(server)}
+                          >
+                            <DeleteIcon fontSize='small' />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant='h5'>No saved servers!</Typography>
+          )}
         </Box>
       </Container>
 
