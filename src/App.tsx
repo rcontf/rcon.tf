@@ -10,11 +10,7 @@ import Loader from './components/Loader';
 import HomePage from './pages/HomePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useDispatch } from 'react-redux';
-import { loginUser } from './redux/users/userSlice';
-
-const SuccessPage = lazy(
-  () => import(/* webpackChunkName: "success-page" */ './pages/AuthSuccess')
-);
+import { fetchUser } from './redux/users/userSlice';
 
 const ServerPage = lazy(
   () => import(/* webpackChunkName: "server-page" */ './pages/ServerPage')
@@ -34,7 +30,7 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(loginUser());
+    dispatch(fetchUser());
     // eslint-disable-next-line
   }, []);
 
@@ -45,7 +41,6 @@ function App() {
         <Router>
           <Switch>
             <Route exact path='/' component={HomePage} />
-            <Route path='/success' component={SuccessPage} />
             <ProtectedRoute path='/servers'>
               <ServerPage />
             </ProtectedRoute>

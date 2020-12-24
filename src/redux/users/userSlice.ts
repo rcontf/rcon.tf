@@ -1,6 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../store';
-import axios from 'axios';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AppThunk, RootState } from '../store';
+
+import { getUserInfo } from './userApi';
 
 interface UserState {
   avatar: string;
@@ -16,34 +17,36 @@ const initialState: UserState = {
   name: '',
 };
 
-export const loginUser = createAsyncThunk('users/login', async () => {
-  const { data } = await axios.get<UserData>('/api/users');
-  return { id: data.id, avatar: data.avatar, name: data.name };
-});
-
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<UserData>) => {
+    setUserSuccess: (state, action: PayloadAction<UserData>) => {
       state.avatar = action.payload.avatar;
       state.id = action.payload.id;
       state.name = action.payload.name;
     },
-  },
-  extraReducers: builder => {
-    builder.addCase(loginUser.fulfilled, (state, { payload }) => {
-      state.id = payload.id;
-      state.avatar = payload.avatar;
-      state.name = payload.name;
-    });
+    setUserFailure: state => {
+      state.avatar = '';
+      state.id = '';
+      state.name = '';
+    },
   },
 });
 
-export const { setUser } = userSlice.actions;
+export const { setUserSuccess, setUserFailure } = userSlice.actions;
 
 export const userSelector = (state: RootState) => {
   return state.user;
+};
+
+export const fetchUser = (): AppThunk => async dispatch => {
+  try {
+    const user = await getUserInfo();
+    dispatch(setUserSuccess(user));
+  } catch (err) {
+    dispatch(setUserFailure());
+  }
 };
 
 export default userSlice.reducer;

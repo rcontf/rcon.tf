@@ -4,7 +4,7 @@ import {
   AddServerDto,
   EditServerDto,
   GetServerResponse,
-} from '../../types/types';
+} from './types';
 import {
   getUserServers,
   addUserServer,
@@ -58,7 +58,7 @@ export const {
   getAllServersFailure,
 } = serverSlice.actions;
 
-export const serverReducer = (state: RootState) => {
+export const serverSelector = (state: RootState) => {
   return state.server;
 };
 

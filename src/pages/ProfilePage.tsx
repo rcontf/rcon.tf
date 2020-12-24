@@ -5,7 +5,7 @@ import { userSelector } from '../redux/users/userSlice';
 import {
   deleteServer,
   editServer,
-  serverReducer,
+  serverSelector,
 } from '../redux/servers/serverSlice';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -32,7 +32,7 @@ import {
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import { EditServerDto, GetServerResponse } from '../types/types';
+import { EditServerDto, GetServerResponse } from '../redux/servers/types';
 import { useFormik } from 'formik';
 
 const useStyles = makeStyles(theme => ({
@@ -57,7 +57,7 @@ export default function ProfilePage() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const user = useSelector(userSelector);
-  const servers = useSelector(serverReducer);
+  const servers = useSelector(serverSelector);
 
   const [deleteServerOpen, setDeleteServerOpen] = useState(false);
   const [editServerOpen, setEditServerOpen] = useState(false);

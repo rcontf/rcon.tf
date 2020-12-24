@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   addServer,
   fetchServers,
-  serverReducer,
+  serverSelector,
 } from '../redux/servers/serverSlice';
 import MenuItem from '@material-ui/core/MenuItem';
 
@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 export default function ServerPage() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const servers = useSelector(serverReducer);
+  const servers = useSelector(serverSelector);
 
   const [open, setOpen] = useState<boolean>(false);
 
