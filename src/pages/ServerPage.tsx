@@ -32,6 +32,9 @@ const useStyles = makeStyles(theme => ({
     '& > *': {
       marginTop: theme.spacing(2),
     },
+    '& > *:first-child': {
+      marginTop: 0,
+    },
   },
 }));
 
