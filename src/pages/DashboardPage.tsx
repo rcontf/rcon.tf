@@ -20,7 +20,9 @@ import {
   TableRow,
   TableBody,
   Tooltip,
+  Snackbar,
 } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert/Alert';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -58,6 +60,7 @@ export default function DashboardPage() {
   const classes = useStyles();
   const server = useSelector(serverSelector);
 
+  const [serverError, setServerError] = useState(false);
   const [serverStats, setServerStats] = useState('');
   const [serverDetails, setServerDetails] = useState<ServerDetails>({
     map: '',
@@ -84,7 +87,10 @@ export default function DashboardPage() {
           setServerStats(data.body.toString());
           setPlayers(getPlayers(data.body.toString()));
         })
-        .catch(er => console.log('Cannot reach server.\n' + er));
+        .catch(er => {
+          setServerError(true);
+          console.log('Cannot reach server.\n' + er);
+        });
     }, 10000);
     return () => clearInterval(interval);
   }, [server.selected]);
@@ -101,7 +107,10 @@ export default function DashboardPage() {
         setServerStats(data.body.toString());
         setPlayers(getPlayers(data.body.toString()));
       })
-      .catch(er => console.log('Cannot reach server.\n' + er));
+      .catch(er => {
+        setServerError(true);
+        console.log('Cannot reach server.\n' + er);
+      });
   }, [server.selected]);
 
   async function removePlayer(id: string, ban: boolean = false) {
@@ -229,6 +238,22 @@ export default function DashboardPage() {
           </Box>
         </Grid>
       </Container>
+
+      <Snackbar
+        open={serverError}
+        autoHideDuration={6000}
+        onClose={() => setServerError(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <MuiAlert
+          elevation={6}
+          variant='filled'
+          onClose={() => setServerError(false)}
+          severity='warning'
+        >
+          Could not reach server!
+        </MuiAlert>
+      </Snackbar>
     </Layout>
   );
 }
