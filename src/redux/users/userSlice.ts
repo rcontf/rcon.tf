@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store';
 
+import { UserData } from './types';
 import { getUserInfo } from './userApi';
 
 interface UserState {
@@ -8,8 +9,6 @@ interface UserState {
   id: string;
   name: string;
 }
-
-interface UserData extends UserState {}
 
 const initialState: UserState = {
   avatar: '',
