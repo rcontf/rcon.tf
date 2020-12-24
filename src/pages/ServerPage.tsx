@@ -98,7 +98,7 @@ export default function ServerPage() {
               Add
             </Button>
           </Grid>
-          {servers.allServers &&
+          {servers.allServers.length ? (
             servers.allServers.map(server => (
               <Grid
                 item
@@ -107,7 +107,10 @@ export default function ServerPage() {
               >
                 <Server {...server} />
               </Grid>
-            ))}
+            ))
+          ) : (
+            <Typography variant='h4'>Your server list is empty :/</Typography>
+          )}
         </Grid>
 
         <Modal
