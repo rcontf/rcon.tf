@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import {
   deleteServer,
   editServer,
-  serverReducer,
+  serverSelector,
 } from '../redux/servers/serverSlice';
 import SteamId from 'steamid';
 
@@ -72,7 +72,7 @@ interface PlayerObject {
 export default function DashboardPage() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const server = useSelector(serverReducer);
+  const server = useSelector(serverSelector);
   const history = useHistory();
 
   const [, setServerStats] = useState<string>('');
