@@ -206,7 +206,7 @@ export default function ProfilePage() {
               fullWidth
               required
               value={formik.values.password}
-              onChange={formik.handleChange}
+              onChange={e => formik.setFieldValue('password', e.target.value)}
               error={formik.touched.password && Boolean(formik.errors.password)}
             />
             <TextField
