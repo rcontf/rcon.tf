@@ -66,6 +66,7 @@ export default function DashboardPage() {
   const [players, setPlayers] = useState<PlayerObject[]>([]);
 
   useEffect(() => {
+    if (!serverStats.length) return;
     const updatedDetails = getServerDetails(serverStats);
     setServerDetails(updatedDetails);
   }, [serverStats]);
@@ -258,5 +259,14 @@ function getPlayers(body: string): PlayerObject[] {
 }
 
 function getServerDetails(rawStatus: string): ServerDetails {
-  return { map: 'cp_sunshine', players: '0/24' };
+  const mapMatch = rawStatus.match(/: (.+) at:/) as string[];
+  const maxPlayerMatch = rawStatus.match(/(\d{1,} max\))/) as string[];
+  const amountPlayerMatch = rawStatus.match(
+    /\d{1,} humans, 1 bots \(\d{1,} max\)/
+  ) as string[];
+
+  const map = mapMatch[1];
+  const maxPlayers = maxPlayerMatch.join('').split(' ')[0];
+  const numberOfPlayers = amountPlayerMatch.join('').split(' ')[0];
+  return { map, players: `${numberOfPlayers}/${maxPlayers} players` };
 }
