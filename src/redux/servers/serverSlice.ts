@@ -97,6 +97,7 @@ export const editServer = (
   try {
     dispatch(setSelection(dto));
     await editUserServer(ip, dto);
+    dispatch(fetchServers());
   } catch (err) {
     dispatch(getAllServersFailure(err.toString()));
   }
