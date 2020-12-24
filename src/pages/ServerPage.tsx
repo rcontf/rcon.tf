@@ -1,83 +1,80 @@
-import React, { useState, FormEvent, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layouts/Layout';
 import Server from '../components/Server';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addServer,
+  fetchServers,
+  serverSelector,
+} from '../redux/servers/serverSlice';
+import { useFormik } from 'formik';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import Modal from '@material-ui/core/Modal';
-import Paper from '@material-ui/core/Paper';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  addServer,
-  fetchServers,
-  serverReducer,
-} from '../redux/servers/serverSlice';
-import MenuItem from '@material-ui/core/MenuItem';
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: '5vh',
   },
-  modal: {
-    position: 'absolute',
-    width: 400,
-    height: 600,
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    outline: 0,
-  },
   serverContainer: {
     width: '60%',
+  },
+  formInputs: {
+    '& > *': {
+      marginTop: theme.spacing(2),
+    },
+    '& > *:first-child': {
+      marginTop: 0,
+    },
   },
 }));
 
 export default function ServerPage() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const servers = useSelector(serverReducer);
+  const servers = useSelector(serverSelector);
 
-  const [open, setOpen] = useState<boolean>(false);
-
-  const serverIp = useRef<HTMLInputElement>();
-  const serverPassword = useRef<HTMLInputElement>();
-  const serverHostname = useRef<HTMLInputElement>();
-  const serverPort = useRef<HTMLInputElement>();
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!serverHostname || !serverIp || !serverPassword || !serverPort) return;
-    else {
-      dispatch(
-        addServer({
-          hostname: serverHostname!.current!.value,
-          ip: serverIp!.current!.value,
-          password: serverPassword!.current!.value,
-          port: parseInt(serverPort!.current!.value) ?? 27015,
-        })
-      );
-    }
-  };
+  const [addServerOpen, setAddServerOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchServers());
   }, [dispatch]);
+
+  const formik = useFormik({
+    initialValues: {
+      hostname: '',
+      ip: '',
+      password: '',
+      port: 27015,
+    },
+    validate: values => {
+      const userHasServerIp = servers.allServers.some(
+        server => server.ip === values.ip
+      );
+
+      if (userHasServerIp)
+        formik.setFieldError('ip', 'You already have a server with that IP.');
+    },
+    onSubmit: values => {
+      dispatch(
+        addServer({
+          hostname: values.hostname,
+          ip: values.ip,
+          password: values.password,
+          port: values.port,
+        })
+      );
+    },
+  });
 
   return (
     <Layout>
@@ -94,11 +91,11 @@ export default function ServerPage() {
             <Typography variant='h4'>Select a Server</Typography>
           </Grid>
           <Grid item>
-            <Button variant='outlined' onClick={handleOpen}>
+            <Button variant='outlined' onClick={() => setAddServerOpen(true)}>
               Add
             </Button>
           </Grid>
-          {servers.allServers &&
+          {servers.allServers.length ? (
             servers.allServers.map(server => (
               <Grid
                 item
@@ -107,77 +104,87 @@ export default function ServerPage() {
               >
                 <Server {...server} />
               </Grid>
-            ))}
+            ))
+          ) : (
+            <Typography variant='h4'>Your server list is empty :/</Typography>
+          )}
         </Grid>
 
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby='simple-modal-title'
-          aria-describedby='simple-modal-description'
+        <Dialog
+          open={addServerOpen}
+          onClose={() => setAddServerOpen(false)}
+          aria-labelledby='alert-dialog-title'
+          aria-describedby='alert-dialog-description'
         >
-          <Paper className={classes.modal}>
-            <h2 id='simple-modal-title'>Add server</h2>
-            <form autoComplete='off' onSubmit={handleSubmit}>
-              <Grid
-                container
-                alignItems='center'
-                justify='center'
-                direction='column'
-                spacing={2}
-              >
-                <TextField
-                  id='server-hostname'
-                  label='Alias'
-                  helperText='What do you want to call the server?'
-                  fullWidth
-                  required
-                  inputRef={serverHostname}
-                />
-                <TextField
-                  id='server-ip'
-                  label='IP'
-                  fullWidth
-                  required
-                  inputRef={serverIp}
-                />
-                <TextField
-                  id='server-password'
-                  label='Rcon Password'
-                  fullWidth
-                  required
-                  inputRef={serverPassword}
-                />
-                <TextField
-                  id='server-port'
-                  label='Server port'
-                  fullWidth
-                  type='number'
-                  defaultValue={27015}
-                  inputRef={serverPort}
-                />
-                <TextField
-                  id='server-type'
-                  select
-                  label='Type of server'
-                  value='tf2'
-                  fullWidth
-                  InputProps={{
-                    readOnly: true,
-                    disabled: true,
-                  }}
-                >
-                  <MenuItem value='tf2'>Team Fortress 2</MenuItem>
-                </TextField>
-                <Grid item>
-                  <Button variant='outlined' type='submit'>
-                    Add server
-                  </Button>
-                </Grid>
-              </Grid>
+          <DialogTitle id='alert-dialog-title'>Add a new Server</DialogTitle>
+          <DialogContent>
+            <DialogContentText id='alert-dialog-description'>
+              Save your server for easy access and management.
+            </DialogContentText>
+            <form
+              id='add-server-form'
+              onSubmit={formik.handleSubmit}
+              className={classes.formInputs}
+            >
+              <TextField
+                id='server-hostname'
+                name='server-hostname'
+                label='Alias'
+                helperText='What do you want to call the server?'
+                fullWidth
+                required
+                value={formik.values.hostname}
+                onChange={e => formik.setFieldValue('hostname', e.target.value)}
+              />
+              <TextField
+                id='server-ip'
+                name='server-ip'
+                label='IP'
+                fullWidth
+                required
+                value={formik.values.ip}
+                onChange={e => formik.setFieldValue('ip', e.target.value)}
+                error={formik.touched.ip && Boolean(formik.errors.ip)}
+                helperText={formik.touched.ip && formik.errors.ip}
+              />
+              <TextField
+                id='server-password'
+                label='Rcon Password'
+                name='server-password'
+                fullWidth
+                required
+                value={formik.values.password}
+                onChange={e => formik.setFieldValue('password', e.target.value)}
+              />
+              <TextField
+                id='server-port'
+                name='server-port'
+                label='Server port'
+                fullWidth
+                type='number'
+                defaultValue={27015}
+                value={formik.values.port}
+                onChange={e =>
+                  formik.setFieldValue('port', parseInt(e.target.value))
+                }
+                helperText='Default value for Source games are usually 27015'
+              />
             </form>
-          </Paper>
-        </Modal>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setAddServerOpen(false)} color='primary'>
+              Cancel
+            </Button>
+            <Button
+              type='submit'
+              form='add-server-form'
+              color='primary'
+              autoFocus
+            >
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </Layout>
   );

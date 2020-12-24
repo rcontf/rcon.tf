@@ -4,7 +4,7 @@ import {
   AddServerDto,
   EditServerDto,
   GetServerResponse,
-} from '../../types/types';
+} from './types';
 import {
   getUserServers,
   addUserServer,
@@ -58,7 +58,7 @@ export const {
   getAllServersFailure,
 } = serverSlice.actions;
 
-export const serverReducer = (state: RootState) => {
+export const serverSelector = (state: RootState) => {
   return state.server;
 };
 
@@ -97,6 +97,7 @@ export const editServer = (
   try {
     dispatch(setSelection(dto));
     await editUserServer(ip, dto);
+    dispatch(fetchServers());
   } catch (err) {
     dispatch(getAllServersFailure(err.toString()));
   }

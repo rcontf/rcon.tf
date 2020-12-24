@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { GetServerResponse } from '../../types/types';
-import { AddServerDto } from '../../types/types';
+import { GetServerResponse } from './types';
+import { AddServerDto } from './types';
 
 export async function getUserServers() {
   const { data } = await axios.get<GetServerResponse[]>('/api/servers');

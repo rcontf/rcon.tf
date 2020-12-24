@@ -1,5 +1,5 @@
 import React from 'react';
-import { GetServerResponse } from '../types/types';
+import { GetServerResponse } from '../redux/servers/types';
 
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import Box from '@material-ui/core/Box';
