@@ -287,7 +287,7 @@ function getServerDetails(rawStatus: string): ServerDetails {
   const mapMatch = rawStatus.match(/: (.+) at:/) as string[];
   const maxPlayerMatch = rawStatus.match(/(\d{1,} max\))/) as string[];
   const amountPlayerMatch = rawStatus.match(
-    /\d{1,} humans, 1 bots \(\d{1,} max\)/
+    /\d{1,} humans, \d{1,} bots \(\d{1,} max\)/
   ) as string[];
 
   const map = mapMatch[1];
