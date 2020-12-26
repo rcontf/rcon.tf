@@ -41,6 +41,12 @@ export const serverSlice = createSlice({
       );
       state.allServers[serverIndex] = action.payload;
     },
+    deleteServerSuccess: (state, action: PayloadAction<string>) => {
+      const filteredServers = state.allServers.filter(
+        server => server.ip !== action.payload
+      );
+      state.allServers = filteredServers;
+    },
     getAllServersSuccess: (
       state,
       action: PayloadAction<GetServerResponse[]>
@@ -59,6 +65,7 @@ export const {
   getAllServersSuccess,
   getAllServersFailure,
   editServerSuccess,
+  deleteServerSuccess,
 } = serverSlice.actions;
 
 export const serverSelector = (state: RootState) => {
@@ -85,8 +92,8 @@ export const addServer = (dto: AddServerDto): AppThunk => async dispatch => {
 
 export const deleteServer = (ip: string): AppThunk => async dispatch => {
   try {
+    dispatch(deleteServerSuccess(ip));
     await deleteUserServer(ip);
-    dispatch(fetchServers());
   } catch (err) {
     return err.toString();
   }
