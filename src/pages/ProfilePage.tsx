@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/Layouts/Layout';
 import { userSelector } from '../redux/users/userSlice';
 import {
   deleteServer,
   editServer,
+  fetchServers,
   serverSelector,
 } from '../redux/servers/serverSlice';
 import { makeStyles } from '@material-ui/core/styles';
@@ -104,6 +105,12 @@ export default function ProfilePage() {
     setEditServerDetails(server);
     setDeleteServerOpen(true);
   };
+
+  useEffect(() => {
+    if (!servers.allServers.length) {
+      dispatch(fetchServers());
+    }
+  }, [dispatch, servers.allServers]);
 
   return (
     <Layout>
