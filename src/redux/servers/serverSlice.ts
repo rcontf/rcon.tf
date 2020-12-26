@@ -86,7 +86,7 @@ export const addServer = (dto: AddServerDto): AppThunk => async dispatch => {
     const newServer = await addUserServer(dto);
     dispatch(addServerSuccess(newServer));
   } catch (err) {
-    return err.toString();
+    console.warn(err.toString());
   }
 };
 
@@ -95,7 +95,7 @@ export const deleteServer = (ip: string): AppThunk => async dispatch => {
     dispatch(deleteServerSuccess(ip));
     await deleteUserServer(ip);
   } catch (err) {
-    return err.toString();
+    console.warn(err.toString());
   }
 };
 
@@ -107,7 +107,7 @@ export const editServer = (
     const server = await editUserServer(ip, dto);
     dispatch(editServerSuccess(server));
   } catch (err) {
-    return err.toString();
+    console.warn(err.toString());
   }
 };
 

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/Layouts/Layout';
 import { userSelector } from '../redux/users/userSlice';
+import { EditServerDto, GetServerResponse } from '../redux/servers/types';
+import { useFormik } from 'formik';
 import {
   deleteServer,
   editServer,
@@ -33,8 +35,6 @@ import {
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import { EditServerDto, GetServerResponse } from '../redux/servers/types';
-import { useFormik } from 'formik';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -107,9 +107,7 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    if (!servers.allServers.length) {
-      dispatch(fetchServers());
-    }
+    dispatch(fetchServers());
   }, [dispatch, servers.allServers]);
 
   return (
