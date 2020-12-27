@@ -61,8 +61,10 @@ export default function ServerPage() {
         server => server.ip === values.ip
       );
 
-      if (userHasServerIp)
+      if (userHasServerIp) {
         formik.setFieldError('ip', 'You already have a server with that IP.');
+        return { error: 'You already have a server with that IP.' };
+      }
     },
     onSubmit: values => {
       dispatch(

@@ -1,10 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk, RootState } from '../store';
-import {
-  AddServerDto,
-  EditServerDto,
-  GetServerResponse,
-} from './types';
+import { AddServerDto, EditServerDto, GetServerResponse } from './types';
 import {
   getUserServers,
   addUserServer,
@@ -39,6 +35,18 @@ export const serverSlice = createSlice({
     addServerSuccess: (state, action: PayloadAction<GetServerResponse>) => {
       state.allServers.push(action.payload);
     },
+    editServerSuccess: (state, action: PayloadAction<GetServerResponse>) => {
+      const serverIndex = state.allServers.findIndex(
+        server => server.ip === action.payload.ip
+      );
+      state.allServers[serverIndex] = action.payload;
+    },
+    deleteServerSuccess: (state, action: PayloadAction<string>) => {
+      const filteredServers = state.allServers.filter(
+        server => server.ip !== action.payload
+      );
+      state.allServers = filteredServers;
+    },
     getAllServersSuccess: (
       state,
       action: PayloadAction<GetServerResponse[]>
@@ -56,6 +64,8 @@ export const {
   addServerSuccess,
   getAllServersSuccess,
   getAllServersFailure,
+  editServerSuccess,
+  deleteServerSuccess,
 } = serverSlice.actions;
 
 export const serverSelector = (state: RootState) => {
@@ -74,19 +84,18 @@ export const fetchServers = (): AppThunk => async dispatch => {
 export const addServer = (dto: AddServerDto): AppThunk => async dispatch => {
   try {
     const newServer = await addUserServer(dto);
-    if (!newServer) return;
     dispatch(addServerSuccess(newServer));
   } catch (err) {
-    dispatch(getAllServersFailure(err.toString()));
+    console.warn(err.toString());
   }
 };
 
 export const deleteServer = (ip: string): AppThunk => async dispatch => {
   try {
+    dispatch(deleteServerSuccess(ip));
     await deleteUserServer(ip);
-    dispatch(fetchServers());
   } catch (err) {
-    dispatch(getAllServersFailure(err.toString()));
+    console.warn(err.toString());
   }
 };
 
@@ -95,11 +104,10 @@ export const editServer = (
   dto: EditServerDto
 ): AppThunk => async dispatch => {
   try {
-    dispatch(setSelection(dto));
-    await editUserServer(ip, dto);
-    dispatch(fetchServers());
+    const server = await editUserServer(ip, dto);
+    dispatch(editServerSuccess(server));
   } catch (err) {
-    dispatch(getAllServersFailure(err.toString()));
+    console.warn(err.toString());
   }
 };
 
