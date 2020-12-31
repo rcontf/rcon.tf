@@ -108,7 +108,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     dispatch(fetchServers());
-  }, [dispatch, servers.allServers]);
+  }, [dispatch]);
 
   return (
     <Layout>
