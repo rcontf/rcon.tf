@@ -21,10 +21,12 @@ import {
   TableBody,
   Tooltip,
   Snackbar,
+  InputBase,
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert/Alert';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
+import SearchIcon from '@material-ui/icons/Search';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
@@ -36,6 +38,17 @@ const useStyles = makeStyles(theme => ({
   },
   table: {
     minWidth: 650,
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  pre: {
+    fontSize: '1.25rem',
+    paddingBottom: 30,
   },
 }));
 
@@ -59,6 +72,9 @@ interface ServerDetails {
 export default function DashboardPage() {
   const classes = useStyles();
   const server = useSelector(serverSelector);
+
+  const [customCommand, setCustomCommand] = useState('');
+  const [customCommandResponse, setCustomCommandResponse] = useState('');
 
   const [serverError, setServerError] = useState(false);
   const [serverStats, setServerStats] = useState('');
@@ -112,6 +128,35 @@ export default function DashboardPage() {
         console.log('Cannot reach server.\n' + er);
       });
   }, [server.selected]);
+
+  const handleCustomCommand = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    console.log({
+      ip: server.selected.ip,
+      password: server.selected.password,
+      port: server.selected.port,
+      command: customCommand,
+    });
+
+    axios
+      .post<ServerExecuteResponse>('/api/execute', {
+        ip: server.selected.ip,
+        password: server.selected.password,
+        port: server.selected.port,
+        command: customCommand,
+      })
+      .then(({ data }) => {
+        if (data) setCustomCommandResponse(data.body.toString());
+        else
+          setCustomCommandResponse(
+            `Successfully executed command ${customCommand}`
+          );
+      })
+      .catch(er => {
+        setCustomCommandResponse('');
+      });
+  };
 
   async function removePlayer(id: string, ban: boolean = false) {
     if (ban) {
@@ -235,6 +280,42 @@ export default function DashboardPage() {
             >
               Kick all
             </Button>
+          </Box>
+
+          <Typography variant='h4' className={classes.root}>
+            Custom command
+          </Typography>
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            flexDirection='column'
+            gridGap={10}
+          >
+            <Paper component='form' className={classes.root}>
+              <InputBase
+                className={classes.input}
+                placeholder='Send Custom Command'
+                inputProps={{ 'aria-label': 'Send Custom Command' }}
+                onChange={e => setCustomCommand(e.target.value)}
+              />
+              <IconButton
+                onClick={e => handleCustomCommand(e)}
+                type='submit'
+                className={classes.iconButton}
+                aria-label='search'
+              >
+                <SearchIcon />
+              </IconButton>
+            </Paper>
+            {customCommandResponse ? (
+              <>
+                <Typography align='left' variant='h5'>
+                  Response
+                </Typography>
+                <pre className={classes.pre}>{customCommandResponse}</pre>
+              </>
+            ) : null}
           </Box>
         </Grid>
       </Container>
