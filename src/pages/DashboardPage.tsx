@@ -31,7 +31,6 @@ import BlockIcon from '@material-ui/icons/Block';
 import SendIcon from '@material-ui/icons/Send';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import LinkIcon from '@material-ui/icons/Link';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
@@ -137,28 +136,16 @@ export default function DashboardPage() {
   const handleCustomCommand = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log({
-      ip: server.selected.ip,
-      password: server.selected.password,
-      port: server.selected.port,
-      command: customCommand,
-    });
-
-    axios
-      .post<ServerExecuteResponse>('/api/execute', {
-        ip: server.selected.ip,
-        password: server.selected.password,
-        port: server.selected.port,
-        command: customCommand,
-      })
-      .then(({ data }) => {
-        if (data) setCustomCommandResponse(data.body.toString());
+    sendCommand(customCommand)
+      .then(res => {
+        if (res) setCustomCommandResponse(res.toString());
         else
           setCustomCommandResponse(
             `Successfully executed command ${customCommand}`
           );
       })
       .catch(er => {
+        console.log(er);
         setCustomCommandResponse('');
       });
   };
@@ -171,17 +158,25 @@ export default function DashboardPage() {
     }
   }
 
-  async function sendCommand(command: string, showDialog: boolean = false) {
+  async function sendCommand(
+    command: string,
+    showDialog: boolean = false
+  ): Promise<string | null> {
     if (showDialog) {
       const doCommand = window.confirm('Really send this command?');
-      if (!doCommand) return;
+      if (!doCommand) return null;
     }
-    await axios.post<ServerExecuteResponse>('/api/execute', {
+
+    const {
+      data: { body },
+    } = await axios.post<ServerExecuteResponse>('/api/execute', {
       ip: server.selected.ip,
       password: server.selected.password,
       port: server.selected.port,
       command,
     });
+
+    return body;
   }
 
   return (
