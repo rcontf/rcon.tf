@@ -209,7 +209,7 @@ export default function DashboardPage() {
                   <TableRow>
                     <TableCell />
                     <TableCell>Name</TableCell>
-                    <TableCell align='right'>Steam ID</TableCell>
+                    <TableCell align='right'>Logs.tf</TableCell>
                     <TableCell align='right'>Connected Time</TableCell>
                     <TableCell align='right'>Ping</TableCell>
                     <TableCell />
@@ -376,11 +376,17 @@ function Player(props: PlayerProps) {
           </IconButton>
         </TableCell>
         <TableCell component='th' scope='row'>
-          {player.name}
+        <Typography variant='body1'>{player.name}</Typography>
         </TableCell>
-        <TableCell align='right'>{steamId64}</TableCell>
-        <TableCell align='right'>{player.connected}</TableCell>
-        <TableCell align='right'>{player.ping}</TableCell>
+        <TableCell align='right'>
+          <RenderedLink
+            href='https://logs.tf/profile/'
+            steamId={steamId64}
+            type='Logs.tf'
+          />
+        </TableCell>
+        <TableCell align='right'><Typography variant='body1'>{player.connected}</Typography></TableCell>
+        <TableCell align='right'><Typography variant='body1'>{player.ping}</Typography></TableCell>
         <TableCell align='center'>
           {' '}
           <Tooltip title='Kick player'>
