@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Layout from '../components/Layouts/Layout';
 import axios from 'axios';
@@ -22,11 +22,15 @@ import {
   Tooltip,
   Snackbar,
   InputBase,
+  Collapse,
+  Link,
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert/Alert';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
-import SearchIcon from '@material-ui/icons/Search';
+import SendIcon from '@material-ui/icons/Send';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
@@ -132,28 +136,16 @@ export default function DashboardPage() {
   const handleCustomCommand = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log({
-      ip: server.selected.ip,
-      password: server.selected.password,
-      port: server.selected.port,
-      command: customCommand,
-    });
-
-    axios
-      .post<ServerExecuteResponse>('/api/execute', {
-        ip: server.selected.ip,
-        password: server.selected.password,
-        port: server.selected.port,
-        command: customCommand,
-      })
-      .then(({ data }) => {
-        if (data) setCustomCommandResponse(data.body.toString());
+    sendCommand(customCommand)
+      .then(res => {
+        if (res) setCustomCommandResponse(res.toString());
         else
           setCustomCommandResponse(
             `Successfully executed command ${customCommand}`
           );
       })
       .catch(er => {
+        console.log(er);
         setCustomCommandResponse('');
       });
   };
@@ -166,17 +158,25 @@ export default function DashboardPage() {
     }
   }
 
-  async function sendCommand(command: string, showDialog: boolean = false) {
+  async function sendCommand(
+    command: string,
+    showDialog: boolean = false
+  ): Promise<string | null> {
     if (showDialog) {
       const doCommand = window.confirm('Really send this command?');
-      if (!doCommand) return;
+      if (!doCommand) return null;
     }
-    await axios.post<ServerExecuteResponse>('/api/execute', {
+
+    const {
+      data: { body },
+    } = await axios.post<ServerExecuteResponse>('/api/execute', {
       ip: server.selected.ip,
       password: server.selected.password,
       port: server.selected.port,
       command,
     });
+
+    return body;
   }
 
   return (
@@ -207,6 +207,7 @@ export default function DashboardPage() {
               >
                 <TableHead>
                   <TableRow>
+                    <TableCell />
                     <TableCell>Name</TableCell>
                     <TableCell align='right'>Steam ID</TableCell>
                     <TableCell align='right'>Connected Time</TableCell>
@@ -217,40 +218,11 @@ export default function DashboardPage() {
                 </TableHead>
                 <TableBody>
                   {players.map(player => (
-                    <TableRow key={player.playerId}>
-                      <TableCell component='th' scope='row'>
-                        {player.name}
-                      </TableCell>
-                      <TableCell align='right'>
-                        {new SteamId(player.id).getSteamID64()}
-                      </TableCell>
-                      <TableCell align='right'>{player.connected}</TableCell>
-                      <TableCell align='right'>{player.ping}</TableCell>
-                      <TableCell align='center'>
-                        {' '}
-                        <Tooltip title='Kick player'>
-                          <IconButton
-                            onClick={async () =>
-                              await removePlayer(player.playerId)
-                            }
-                          >
-                            <DeleteIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell align='center'>
-                        {' '}
-                        <Tooltip title='Ban player'>
-                          <IconButton
-                            onClick={async () =>
-                              await removePlayer(player.playerId, true)
-                            }
-                          >
-                            <BlockIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
+                    <Player
+                      key={player.playerId}
+                      player={player}
+                      removePlayer={removePlayer}
+                    />
                   ))}
                 </TableBody>
               </Table>
@@ -305,7 +277,7 @@ export default function DashboardPage() {
                 className={classes.iconButton}
                 aria-label='search'
               >
-                <SearchIcon />
+                <SendIcon />
               </IconButton>
             </Paper>
             {customCommandResponse ? (
@@ -375,4 +347,118 @@ function getServerDetails(rawStatus: string): ServerDetails {
   const maxPlayers = maxPlayerMatch.join('').split(' ')[0];
   const numberOfPlayers = amountPlayerMatch.join('').split(' ')[0];
   return { map, players: `${numberOfPlayers}/${maxPlayers} players` };
+}
+
+interface PlayerProps {
+  player: PlayerObject;
+  removePlayer: (id: string, ban?: boolean) => Promise<void>;
+}
+
+function Player(props: PlayerProps) {
+  const { player, removePlayer } = props;
+  const [open, setOpen] = useState(false);
+  const steamId = useMemo(() => new SteamId(player.id), [player.id]);
+
+  const steamId64 = steamId.getSteamID64();
+  const steamId3 = steamId.getSteam3RenderedID();
+  const steamId2 = steamId.getSteam2RenderedID();
+
+  return (
+    <>
+      <TableRow key={player.playerId}>
+        <TableCell>
+          <IconButton
+            aria-label='expand row'
+            size='small'
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+        <TableCell component='th' scope='row'>
+          {player.name}
+        </TableCell>
+        <TableCell align='right'>{steamId64}</TableCell>
+        <TableCell align='right'>{player.connected}</TableCell>
+        <TableCell align='right'>{player.ping}</TableCell>
+        <TableCell align='center'>
+          {' '}
+          <Tooltip title='Kick player'>
+            <IconButton
+              onClick={async () => await removePlayer(player.playerId)}
+            >
+              <DeleteIcon fontSize='small' />
+            </IconButton>
+          </Tooltip>
+        </TableCell>
+        <TableCell align='center'>
+          {' '}
+          <Tooltip title='Ban player'>
+            <IconButton
+              onClick={async () => await removePlayer(player.playerId, true)}
+            >
+              <BlockIcon fontSize='small' />
+            </IconButton>
+          </Tooltip>
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout='auto' unmountOnExit>
+            <Box margin={1}>
+              <Typography variant='h6' gutterBottom component='div'>
+                Expanded information for {player.name}:
+              </Typography>
+              <Box display='flex' gridGap={10} style={{ marginBottom: 5 }}>
+                <RenderedLink
+                  href='http://steamcommunity.com/profiles/'
+                  steamId={steamId64}
+                  type='Steam'
+                />
+                <RenderedLink
+                  href='https://logs.tf/profile/'
+                  steamId={steamId64}
+                  type='Logs.tf'
+                />
+                <RenderedLink
+                  href='http://rgl.gg/Public/PlayerProfile.aspx?p='
+                  steamId={steamId64}
+                  type='RGL'
+                />
+                <RenderedLink
+                  href='http://etf2l.org/search/'
+                  steamId={steamId64}
+                  type='ETF2L'
+                />
+                <RenderedLink
+                  href='http://www.ugcleague.com/players_page.cfm?player_id='
+                  steamId={steamId64}
+                  type='UGC'
+                />
+              </Box>
+              <Box display='flex' flexDirection='column'>
+                <Typography variant='body1'>ID64: {steamId64}</Typography>
+                <Typography variant='body1'>ID3: {steamId3}</Typography>
+                <Typography variant='body1'>ID2: {steamId2}</Typography>
+              </Box>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
+  );
+}
+
+interface RenderedLinkProps {
+  steamId: string;
+  href: string;
+  type: string;
+}
+
+function RenderedLink({ steamId, href, type }: RenderedLinkProps) {
+  return (
+    <Link target='_blank' href={href + steamId} variant='body1'>
+      {type}
+    </Link>
+  );
 }
