@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/Layouts/Layout';
-import { userSelector } from '../redux/users/userSlice';
+import useUser from "../contexts/UserContext";
 import { EditServerDto, GetServerResponse } from '../redux/servers/types';
 import { useFormik } from 'formik';
 import {
@@ -55,9 +55,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ProfilePage() {
+  const currentUser = useUser();
+  const user = currentUser!.user!
+
   const classes = useStyles();
   const dispatch = useDispatch();
-  const user = useSelector(userSelector);
   const servers = useSelector(serverSelector);
 
   const [deleteServerOpen, setDeleteServerOpen] = useState(false);
