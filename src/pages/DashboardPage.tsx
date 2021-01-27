@@ -4,6 +4,7 @@ import Layout from '../components/Layouts/Layout';
 import axios from 'axios';
 import { serverSelector } from '../redux/servers/serverSlice';
 import SteamId from 'steamid';
+import { useHistory } from 'react-router-dom';
 
 import {
   Box,
@@ -25,7 +26,7 @@ import {
   Collapse,
   Link,
 } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert/Alert';
+import Alert from '@material-ui/lab/Alert';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
 import SendIcon from '@material-ui/icons/Send';
@@ -76,17 +77,21 @@ interface ServerDetails {
 export default function DashboardPage() {
   const classes = useStyles();
   const server = useSelector(serverSelector);
+  const history = useHistory();
 
   const [customCommand, setCustomCommand] = useState('');
   const [customCommandResponse, setCustomCommandResponse] = useState('');
 
   const [serverError, setServerError] = useState(false);
+  const [serverErrorDetails, setServerErrorDetails] = useState('');
   const [serverStats, setServerStats] = useState('');
   const [serverDetails, setServerDetails] = useState<ServerDetails>({
     map: '',
     players: '0/24',
   });
   const [players, setPlayers] = useState<PlayerObject[]>([]);
+
+  if (!server.selected?.hostname) history.push('/servers');
 
   useEffect(() => {
     if (!serverStats.length) return;
@@ -108,8 +113,9 @@ export default function DashboardPage() {
           setPlayers(getPlayers(data.body.toString()));
         })
         .catch(er => {
+          if (er.response.data.message)
+            setServerErrorDetails(er.response.data.message);
           setServerError(true);
-          console.log('Cannot reach server.\n' + er);
         });
     }, 10000);
     return () => clearInterval(interval);
@@ -128,8 +134,9 @@ export default function DashboardPage() {
         setPlayers(getPlayers(data.body.toString()));
       })
       .catch(er => {
+        if (er.response.data.message)
+          setServerErrorDetails(er.response.data.message);
         setServerError(true);
-        console.log('Cannot reach server.\n' + er);
       });
   }, [server.selected]);
 
@@ -145,8 +152,7 @@ export default function DashboardPage() {
           );
       })
       .catch(er => {
-        console.log(er);
-        setCustomCommandResponse('');
+        setCustomCommandResponse('Error executing command. (Maybe was sent?)');
       });
   };
 
@@ -298,14 +304,14 @@ export default function DashboardPage() {
         onClose={() => setServerError(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <MuiAlert
+        <Alert
           elevation={6}
           variant='filled'
           onClose={() => setServerError(false)}
           severity='warning'
         >
-          Could not reach server!
-        </MuiAlert>
+          {serverErrorDetails ?? 'Error connecting to server.'}
+        </Alert>
       </Snackbar>
     </Layout>
   );
@@ -376,7 +382,7 @@ function Player(props: PlayerProps) {
           </IconButton>
         </TableCell>
         <TableCell component='th' scope='row'>
-        <Typography variant='body1'>{player.name}</Typography>
+          <Typography variant='body1'>{player.name}</Typography>
         </TableCell>
         <TableCell align='right'>
           <RenderedLink
@@ -385,8 +391,12 @@ function Player(props: PlayerProps) {
             type='Logs.tf'
           />
         </TableCell>
-        <TableCell align='right'><Typography variant='body1'>{player.connected}</Typography></TableCell>
-        <TableCell align='right'><Typography variant='body1'>{player.ping}</Typography></TableCell>
+        <TableCell align='right'>
+          <Typography variant='body1'>{player.connected}</Typography>
+        </TableCell>
+        <TableCell align='right'>
+          <Typography variant='body1'>{player.ping}</Typography>
+        </TableCell>
         <TableCell align='center'>
           {' '}
           <Tooltip title='Kick player'>

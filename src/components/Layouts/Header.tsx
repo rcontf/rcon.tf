@@ -5,13 +5,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-import { useSelector } from 'react-redux';
-import { userSelector } from '../../redux/users/userSlice';
 import IconButton from '@material-ui/core/IconButton';
 import { Avatar, Link as StyledLink } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Link } from 'react-router-dom';
+import useUser from "../../contexts/UserContext"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,8 +35,7 @@ interface HeaderProps {
 
 export default function Header({ login, logout }: HeaderProps) {
   const classes = useStyles();
-
-  const user = useSelector(userSelector);
+  const { user } = useUser();
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -59,7 +57,7 @@ export default function Header({ login, logout }: HeaderProps) {
             </StyledLink>
           </Typography>
 
-          {user?.id?.length ? (
+          {user ? (
             <>
               <IconButton
                 aria-label='account of current user'

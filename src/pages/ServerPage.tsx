@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layouts/Layout';
 import Server from '../components/Server';
+import ServerSkeleton from '../components/ServerSkeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addServer,
@@ -9,7 +10,7 @@ import {
 } from '../redux/servers/serverSlice';
 import { useFormik } from 'formik';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -21,12 +22,15 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     marginTop: '5vh',
   },
   serverContainer: {
     width: '60%',
+    [theme.breakpoints.down('sm')]: {
+      width: '90vw',
+    },
   },
   formInputs: {
     '& > *': {
@@ -97,7 +101,17 @@ export default function ServerPage() {
               Add
             </Button>
           </Grid>
-          {servers.allServers.length ? (
+          {servers.allServersError && (
+            <Typography variant='h4'>
+              Problem loading your servers :(
+            </Typography>
+          )}
+          {!servers.loadingAllServers && !servers.allServers.length && (
+            <Typography variant='h4'>You have no saved servers!</Typography>
+          )}
+          {!servers.loadingAllServers &&
+          !servers.allServersError &&
+          servers.allServers.length > 0 ? (
             servers.allServers.map(server => (
               <Grid
                 item
@@ -108,7 +122,12 @@ export default function ServerPage() {
               </Grid>
             ))
           ) : (
-            <Typography variant='h4'>Your server list is empty :/</Typography>
+            <>
+              <ServerSkeleton />
+              <ServerSkeleton />
+              <ServerSkeleton />
+              <ServerSkeleton />
+            </>
           )}
         </Grid>
 
@@ -124,51 +143,49 @@ export default function ServerPage() {
               Save your server for easy access and management.
             </DialogContentText>
             <form
+              autoComplete='off'
               id='add-server-form'
               onSubmit={formik.handleSubmit}
               className={classes.formInputs}
             >
               <TextField
-                id='server-hostname'
-                name='server-hostname'
+                id='hostname'
+                name='hostname'
                 label='Alias'
                 helperText='What do you want to call the server?'
                 fullWidth
                 required
                 value={formik.values.hostname}
-                onChange={e => formik.setFieldValue('hostname', e.target.value)}
+                onChange={formik.handleChange}
               />
               <TextField
-                id='server-ip'
-                name='server-ip'
+                id='ip'
+                name='ip'
                 label='IP'
                 fullWidth
                 required
                 value={formik.values.ip}
-                onChange={e => formik.setFieldValue('ip', e.target.value)}
+                onChange={formik.handleChange}
                 error={formik.touched.ip && Boolean(formik.errors.ip)}
                 helperText={formik.touched.ip && formik.errors.ip}
               />
               <TextField
-                id='server-password'
+                id='password'
+                name='password'
                 label='Rcon Password'
-                name='server-password'
                 fullWidth
                 required
                 value={formik.values.password}
-                onChange={e => formik.setFieldValue('password', e.target.value)}
+                onChange={formik.handleChange}
               />
               <TextField
-                id='server-port'
-                name='server-port'
+                id='port'
+                name='port'
                 label='Server port'
                 fullWidth
                 type='number'
-                defaultValue={27015}
                 value={formik.values.port}
-                onChange={e =>
-                  formik.setFieldValue('port', parseInt(e.target.value))
-                }
+                onChange={e => formik.handleChange}
                 helperText='Default value for Source games are usually 27015'
               />
             </form>
