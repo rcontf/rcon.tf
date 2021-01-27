@@ -20,6 +20,11 @@ const useStyles = makeStyles(theme => ({
   center: {
     textAlign: 'center',
   },
+  spacing: {
+    '& >*': {
+      marginBottom: 10,
+    },
+  },
 }));
 
 export default function CustomCommand() {
@@ -36,7 +41,6 @@ export default function CustomCommand() {
       port: 27015,
       command: '',
     },
-    enableReinitialize: true,
     onSubmit: values => {
       axios
         .post('/api/execute', {
@@ -64,59 +68,51 @@ export default function CustomCommand() {
           Try it out!
         </Typography>
 
-        <TextField
-          id='server-ip'
-          label='Server Ip'
-          style={{ margin: 8 }}
-          placeholder='mge.elo.associates'
-          fullWidth
-          margin='normal'
-          required
-          value={formik.values.ip}
-          onChange={e => formik.setFieldValue('ip', e.target.value)}
-          error={formik.touched.ip && Boolean(formik.errors.ip)}
-        />
-        <TextField
-          id='server-rcon-password'
-          label='Rcon Password'
-          style={{ margin: 8 }}
-          placeholder='rcon-password-here'
-          fullWidth
-          margin='normal'
-          required
-          value={formik.values.password}
-          onChange={e => formik.setFieldValue('password', e.target.value)}
-          error={formik.touched.password && Boolean(formik.errors.password)}
-        />
-        <TextField
-          id='server-rcon-port'
-          label='Port'
-          style={{ margin: 8 }}
-          placeholder='27015'
-          fullWidth
-          type='number'
-          defaultValue={27015}
-          margin='normal'
-          value={formik.values.port}
-          onChange={e => formik.setFieldValue('port', parseInt(e.target.value))}
-          error={formik.touched.port && Boolean(formik.errors.port)}
-        />
-        <TextField
-          id='server-command'
-          label='Command'
-          style={{ margin: 8 }}
-          placeholder='status'
-          fullWidth
-          margin='normal'
-          required
-          value={formik.values.command}
-          onChange={e => formik.setFieldValue('command', e.target.value)}
-          error={formik.touched.command && Boolean(formik.errors.command)}
-        />
-
-        <Button variant='outlined' type='submit'>
-          Send!
-        </Button>
+        <div className={styles.spacing}>
+          <TextField
+            id='ip'
+            label='Server Ip'
+            placeholder='mge.elo.associates'
+            fullWidth
+            required
+            value={formik.values.ip}
+            onChange={formik.handleChange}
+            error={formik.touched.ip && Boolean(formik.errors.ip)}
+          />
+          <TextField
+            id='password'
+            label='Rcon Password'
+            placeholder='rcon-password-here'
+            fullWidth
+            required
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+          />
+          <TextField
+            id='port'
+            label='Port'
+            placeholder='27015'
+            fullWidth
+            margin='normal'
+            value={formik.values.port}
+            onChange={formik.handleChange}
+            error={formik.touched.port && Boolean(formik.errors.port)}
+          />
+          <TextField
+            id='command'
+            label='Command'
+            placeholder='status'
+            fullWidth
+            required
+            value={formik.values.command}
+            onChange={formik.handleChange}
+            error={formik.touched.command && Boolean(formik.errors.command)}
+          />
+          <Button variant='outlined' type='submit'>
+            Send!
+          </Button>
+        </div>
       </form>
 
       <Dialog
@@ -152,7 +148,7 @@ export default function CustomCommand() {
           onClose={() => setServerError(false)}
           severity='warning'
         >
-          {badResponse ?? "Error sending response"}
+          {badResponse ?? 'Error sending response'}
         </Alert>
       </Snackbar>
     </Grid>
