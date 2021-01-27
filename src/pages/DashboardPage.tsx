@@ -83,6 +83,7 @@ export default function DashboardPage() {
   const [customCommandResponse, setCustomCommandResponse] = useState('');
 
   const [serverError, setServerError] = useState(false);
+  const [serverErrorDetails, setServerErrorDetails] = useState('');
   const [serverStats, setServerStats] = useState('');
   const [serverDetails, setServerDetails] = useState<ServerDetails>({
     map: '',
@@ -112,8 +113,9 @@ export default function DashboardPage() {
           setPlayers(getPlayers(data.body.toString()));
         })
         .catch(er => {
+          if (er.response.data.message)
+            setServerErrorDetails(er.response.data.message);
           setServerError(true);
-          console.log('Cannot reach server.\n' + er);
         });
     }, 10000);
     return () => clearInterval(interval);
@@ -132,8 +134,9 @@ export default function DashboardPage() {
         setPlayers(getPlayers(data.body.toString()));
       })
       .catch(er => {
+        if (er.response.data.message)
+          setServerErrorDetails(er.response.data.message);
         setServerError(true);
-        console.log('Cannot reach server.\n' + er);
       });
   }, [server.selected]);
 
@@ -149,8 +152,7 @@ export default function DashboardPage() {
           );
       })
       .catch(er => {
-        console.log(er);
-        setCustomCommandResponse('');
+        setCustomCommandResponse('Error executing command. (Maybe was sent?)');
       });
   };
 
@@ -308,7 +310,7 @@ export default function DashboardPage() {
           onClose={() => setServerError(false)}
           severity='warning'
         >
-          Could not reach server!
+          {serverErrorDetails ?? 'Error connecting to server.'}
         </Alert>
       </Snackbar>
     </Layout>
