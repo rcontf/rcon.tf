@@ -8,18 +8,22 @@ interface AuthProviderProps {
 
 interface User {
   user: UserData | null;
+  isLoading: boolean;
 }
 
-const AuthContext = React.createContext<User>({ user: null });
+const AuthContext = React.createContext<User>({ user: null, isLoading: true });
 
 export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [currentUser, setCurrentUser] = useState<User>({ user: null });
+  const [currentUser, setCurrentUser] = useState<User>({
+    user: null,
+    isLoading: true,
+  });
 
   useEffect(() => {
     getUserInfo()
-      .then(user => setCurrentUser({ ...currentUser, user }))
-      .catch(() => setCurrentUser({ user: null }));
+      .then(user => setCurrentUser({ ...currentUser, user, isLoading: false }))
+      .catch(() => setCurrentUser({ user: null, isLoading: false }));
   }, []);
 
   return (

@@ -8,7 +8,8 @@ interface PrivateRouteProps {
 }
 
 export default function PrivateRoute({ children, ...rest }: PrivateRouteProps) {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
+  if (isLoading) return null;
   return (
     <Route
       {...rest}
