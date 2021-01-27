@@ -8,9 +8,11 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
+  Snackbar,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+
 import axios from 'axios';
 import { useFormik } from 'formik';
 
@@ -24,6 +26,8 @@ export default function CustomCommand() {
   const styles = useStyles();
   const [open, setOpen] = useState<boolean>(false);
   const [response, setResponse] = useState<string>('');
+  const [serverError, setServerError] = useState<boolean>(false);
+  const [badResponse, setBadResponse] = useState<string>('');
 
   const formik = useFormik({
     initialValues: {
@@ -34,7 +38,6 @@ export default function CustomCommand() {
     },
     enableReinitialize: true,
     onSubmit: values => {
-      console.log(values);
       axios
         .post('/api/execute', {
           ip: values.ip,
@@ -45,6 +48,11 @@ export default function CustomCommand() {
         .then(({ data }) => {
           setResponse(data.body);
           setOpen(true);
+        })
+        .catch(e => {
+          if (e.response.data.message) setBadResponse(e.response.data.message);
+          else setBadResponse(e.response.data.error);
+          setServerError(true);
         });
     },
   });
@@ -131,6 +139,22 @@ export default function CustomCommand() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={serverError}
+        autoHideDuration={5000}
+        onClose={() => setServerError(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert
+          elevation={6}
+          variant='filled'
+          onClose={() => setServerError(false)}
+          severity='warning'
+        >
+          {badResponse ?? "Error sending response"}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 }

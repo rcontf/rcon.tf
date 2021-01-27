@@ -1,9 +1,7 @@
 import React from 'react';
 
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import { Skeleton } from '@material-ui/lab';
 
 export default function Server() {

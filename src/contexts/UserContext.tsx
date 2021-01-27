@@ -24,7 +24,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     getUserInfo()
       .then(user => setCurrentUser({ ...currentUser, user, isLoading: false }))
       .catch(() => setCurrentUser({ user: null, isLoading: false }));
-  }, []);
+  }, [currentUser]);
 
   return (
     <AuthContext.Provider value={currentUser}>{children}</AuthContext.Provider>

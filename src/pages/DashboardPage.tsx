@@ -26,7 +26,7 @@ import {
   Collapse,
   Link,
 } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert/Alert';
+import Alert from '@material-ui/lab/Alert';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
 import SendIcon from '@material-ui/icons/Send';
@@ -302,14 +302,14 @@ export default function DashboardPage() {
         onClose={() => setServerError(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <MuiAlert
+        <Alert
           elevation={6}
           variant='filled'
           onClose={() => setServerError(false)}
           severity='warning'
         >
           Could not reach server!
-        </MuiAlert>
+        </Alert>
       </Snackbar>
     </Layout>
   );
