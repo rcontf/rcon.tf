@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layouts/Layout';
 import Server from '../components/Server';
+import ServerSkeleton from '../components/ServerSkeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addServer,
@@ -97,7 +98,17 @@ export default function ServerPage() {
               Add
             </Button>
           </Grid>
-          {servers.allServers.length ? (
+          {servers.allServersError && (
+            <Typography variant='h4'>
+              Problem loading your servers :(
+            </Typography>
+          )}
+          {!servers.loadingAllServers && !servers.allServers.length && (
+            <Typography variant='h4'>You have no saved servers!</Typography>
+          )}
+          {!servers.loadingAllServers &&
+          !servers.allServersError &&
+          servers.allServers.length > 0 ? (
             servers.allServers.map(server => (
               <Grid
                 item
@@ -108,7 +119,12 @@ export default function ServerPage() {
               </Grid>
             ))
           ) : (
-            <Typography variant='h4'>Your server list is empty :/</Typography>
+            <>
+              <ServerSkeleton />
+              <ServerSkeleton />
+              <ServerSkeleton />
+              <ServerSkeleton />
+            </>
           )}
         </Grid>
 

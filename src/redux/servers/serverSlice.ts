@@ -18,11 +18,15 @@ interface ServerInformation {
 interface ServerState {
   selected: ServerInformation;
   allServers: GetServerResponse[];
+  allServersError: string;
+  loadingAllServers: boolean;
 }
 
 const initialState: ServerState = {
   selected: { ip: '', password: '', port: 27015, hostname: '' },
   allServers: [],
+  allServersError: '',
+  loadingAllServers: true,
 };
 
 export const serverSlice = createSlice({
@@ -52,9 +56,12 @@ export const serverSlice = createSlice({
       action: PayloadAction<GetServerResponse[]>
     ) => {
       state.allServers = action.payload;
+      state.loadingAllServers = false;
     },
     getAllServersFailure: (state, action: PayloadAction<string>) => {
       state.allServers = [];
+      state.allServersError = action.payload || "Error retreiving data";
+      state.loadingAllServers = false;
     },
   },
 });
