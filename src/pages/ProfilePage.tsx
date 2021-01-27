@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/Layouts/Layout';
-import useUser from "../contexts/UserContext";
+import useUser from '../contexts/UserContext';
 import { EditServerDto, GetServerResponse } from '../redux/servers/types';
 import { useFormik } from 'formik';
 import {
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function ProfilePage() {
   const currentUser = useUser();
-  const user = currentUser!.user!
+  const user = currentUser!.user!;
 
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -199,6 +199,7 @@ export default function ProfilePage() {
       </Dialog>
 
       <Dialog
+        fullWidth
         open={editServerOpen}
         onClose={() => setEditServerOpen(false)}
         aria-labelledby='alert-dialog-title'
@@ -210,49 +211,53 @@ export default function ProfilePage() {
             Here you may edit your server details.
           </DialogContentText>
           <form id='edit-server-form' onSubmit={formik.handleSubmit}>
-            <TextField
-              id='server-hostname'
-              name='server-hostname'
-              label='Alias'
-              helperText='What do you want to call the server?'
-              fullWidth
-              required
-              value={formik.values.hostname}
-              onChange={e => formik.setFieldValue('hostname', e.target.value)}
-              error={formik.touched.hostname && Boolean(formik.errors.hostname)}
-            />
-            <TextField
-              id='server-ip'
-              name='server-ip'
-              label='IP'
-              fullWidth
-              required
-              value={formik.values.ip}
-              onChange={e => formik.setFieldValue('ip', e.target.value)}
-              error={formik.touched.ip && Boolean(formik.errors.ip)}
-            />
-            <TextField
-              id='server-password'
-              label='Rcon Password'
-              name='server-password'
-              fullWidth
-              required
-              value={formik.values.password}
-              onChange={e => formik.setFieldValue('password', e.target.value)}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-            />
-            <TextField
-              id='server-port'
-              name='server-port'
-              label='Server port'
-              fullWidth
-              type='number'
-              value={formik.values.port}
-              onChange={e =>
-                formik.setFieldValue('port', parseInt(e.target.value))
-              }
-              error={formik.touched.port && Boolean(formik.errors.port)}
-            />
+            <Box display='flex' gridGap={15} flexDirection='column'>
+              <TextField
+                id='hostname'
+                name='hostname'
+                label='Alias'
+                helperText='What do you want to call the server?'
+                fullWidth
+                required
+                value={formik.values.hostname}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.hostname && Boolean(formik.errors.hostname)
+                }
+              />
+              <TextField
+                id='ip'
+                name='ip'
+                label='IP'
+                fullWidth
+                required
+                value={formik.values.ip}
+                onChange={formik.handleChange}
+                error={formik.touched.ip && Boolean(formik.errors.ip)}
+              />
+              <TextField
+                id='password'
+                label='Rcon Password'
+                name='password'
+                fullWidth
+                required
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.password && Boolean(formik.errors.password)
+                }
+              />
+              <TextField
+                id='port'
+                name='port'
+                label='Server port'
+                fullWidth
+                type='number'
+                value={formik.values.port}
+                onChange={formik.handleChange}
+                error={formik.touched.port && Boolean(formik.errors.port)}
+              />
+            </Box>
           </form>
           <DialogActions>
             <Button onClick={() => setEditServerOpen(false)} color='primary'>
