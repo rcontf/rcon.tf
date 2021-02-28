@@ -10,7 +10,7 @@ import { Avatar, Link as StyledLink } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Link } from 'react-router-dom';
-import useUser from "../../contexts/UserContext"
+import useUser from '../../contexts/UserContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,7 +35,7 @@ interface HeaderProps {
 
 export default function Header({ login, logout }: HeaderProps) {
   const classes = useStyles();
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -57,7 +57,23 @@ export default function Header({ login, logout }: HeaderProps) {
             </StyledLink>
           </Typography>
 
-          {user ? (
+          {isLoading && (
+            <IconButton
+              aria-label='account of current user'
+              aria-controls='menu-appbar'
+              color='inherit'
+            >
+              <Avatar src='K' />
+            </IconButton>
+          )}
+
+          {!isLoading && !user && (
+            <Button variant='text' onClick={login}>
+              Login
+            </Button>
+          )}
+
+          {!isLoading && user && (
             <>
               <IconButton
                 aria-label='account of current user'
@@ -101,10 +117,6 @@ export default function Header({ login, logout }: HeaderProps) {
                 <MenuItem onClick={() => logout()}>Logout</MenuItem>
               </Menu>
             </>
-          ) : (
-            <Button variant='text' onClick={login}>
-              Login
-            </Button>
           )}
         </Toolbar>
       </AppBar>
