@@ -145,6 +145,7 @@ export default function ServerPage() {
             <DialogContentText id='alert-dialog-description'>
               Save your server for easy access and management.
             </DialogContentText>
+
             <form
               autoComplete='off'
               id='add-server-form'
