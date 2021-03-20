@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layouts/Layout';
 import Server from '../components/Server';
-import ServerSkeleton from '../components/ServerSkeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addServer,
@@ -21,6 +20,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
+import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -122,12 +123,14 @@ export default function ServerPage() {
               </Grid>
             ))
           ) : (
-            <>
-              <ServerSkeleton />
-              <ServerSkeleton />
-              <ServerSkeleton />
-              <ServerSkeleton />
-            </>
+            <Box
+              display='flex'
+              justifyContent='center'
+              alignItems='center'
+              height='20vh'
+            >
+              <CircularProgress size={50} />
+            </Box>
           )}
         </Grid>
 
