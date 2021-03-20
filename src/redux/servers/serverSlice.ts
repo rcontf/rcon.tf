@@ -17,6 +17,7 @@ interface ServerInformation {
 
 interface ServerState {
   selected: ServerInformation;
+  addServerError: string | null;
   allServers: GetServerResponse[];
   allServersError: string;
   loadingAllServers: boolean;
@@ -24,6 +25,7 @@ interface ServerState {
 
 const initialState: ServerState = {
   selected: { ip: '', password: '', port: 27015, hostname: '' },
+  addServerError: null,
   allServers: [],
   allServersError: '',
   loadingAllServers: true,
@@ -38,6 +40,9 @@ export const serverSlice = createSlice({
     },
     addServerSuccess: (state, action: PayloadAction<GetServerResponse>) => {
       state.allServers.push(action.payload);
+    },
+    addServerFailed: (state, action: PayloadAction<string>) => {
+      state.addServerError = action.payload;
     },
     editServerSuccess: (state, action: PayloadAction<GetServerResponse>) => {
       const serverIndex = state.allServers.findIndex(
@@ -60,7 +65,7 @@ export const serverSlice = createSlice({
     },
     getAllServersFailure: (state, action: PayloadAction<string>) => {
       state.allServers = [];
-      state.allServersError = action.payload || "Error retreiving data";
+      state.allServersError = action.payload || 'Error retreiving data';
       state.loadingAllServers = false;
     },
   },
@@ -69,6 +74,7 @@ export const serverSlice = createSlice({
 export const {
   setSelection,
   addServerSuccess,
+  addServerFailed,
   getAllServersSuccess,
   getAllServersFailure,
   editServerSuccess,
@@ -84,7 +90,7 @@ export const fetchServers = (): AppThunk => async dispatch => {
     const allServers = await getUserServers();
     dispatch(getAllServersSuccess(allServers));
   } catch (err) {
-    dispatch(getAllServersFailure(err.toString()));
+    dispatch(getAllServersFailure(err.message));
   }
 };
 
@@ -93,7 +99,7 @@ export const addServer = (dto: AddServerDto): AppThunk => async dispatch => {
     const newServer = await addUserServer(dto);
     dispatch(addServerSuccess(newServer));
   } catch (err) {
-    console.warn(err.toString());
+    dispatch(addServerFailed(err.message));
   }
 };
 
@@ -102,7 +108,7 @@ export const deleteServer = (ip: string): AppThunk => async dispatch => {
     dispatch(deleteServerSuccess(ip));
     await deleteUserServer(ip);
   } catch (err) {
-    console.warn(err.toString());
+    console.warn(err.message);
   }
 };
 
@@ -114,7 +120,7 @@ export const editServer = (
     const server = await editUserServer(ip, dto);
     dispatch(editServerSuccess(server));
   } catch (err) {
-    console.warn(err.toString());
+    console.warn(err.message);
   }
 };
 
