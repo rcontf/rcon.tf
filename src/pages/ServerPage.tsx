@@ -109,7 +109,7 @@ export default function ServerPage() {
             </Typography>
           )}
 
-          {!servers.loadingAllServers && !!servers.allServers && (
+          {!servers.loadingAllServers && !servers.allServers.length && (
             <Typography variant='h4'>You have no saved servers!</Typography>
           )}
 
@@ -126,7 +126,7 @@ export default function ServerPage() {
 
           {!servers.loadingAllServers &&
             !servers.allServersError &&
-            !!servers.allServers &&
+            servers.allServers.length > 0 &&
             servers.allServers.map(server => (
               <Grid
                 item
