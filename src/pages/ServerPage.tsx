@@ -102,27 +102,18 @@ export default function ServerPage() {
               Add
             </Button>
           </Grid>
+
           {servers.allServersError && (
             <Typography variant='h4'>
               Problem loading your servers :(
             </Typography>
           )}
-          {!servers.loadingAllServers && !servers.allServers.length && (
+
+          {!servers.loadingAllServers && !!servers.allServers && (
             <Typography variant='h4'>You have no saved servers!</Typography>
           )}
-          {!servers.loadingAllServers &&
-          !servers.allServersError &&
-          servers.allServers.length > 0 ? (
-            servers.allServers.map(server => (
-              <Grid
-                item
-                key={server.hostname}
-                className={classes.serverContainer}
-              >
-                <Server {...server} />
-              </Grid>
-            ))
-          ) : (
+
+          {servers.loadingAllServers && (
             <Box
               display='flex'
               justifyContent='center'
@@ -132,6 +123,19 @@ export default function ServerPage() {
               <CircularProgress size={50} />
             </Box>
           )}
+
+          {!servers.loadingAllServers &&
+            !servers.allServersError &&
+            !!servers.allServers &&
+            servers.allServers.map(server => (
+              <Grid
+                item
+                key={server.hostname}
+                className={classes.serverContainer}
+              >
+                <Server {...server} />
+              </Grid>
+            ))}
         </Grid>
 
         <Dialog
