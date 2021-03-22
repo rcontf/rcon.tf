@@ -10,7 +10,7 @@ import {
   fetchServers,
   serverSelector,
 } from '../redux/servers/serverSlice';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
   Avatar,
   Box,
@@ -32,11 +32,12 @@ import {
   Tooltip,
   Typography,
   TextField,
+  CircularProgress,
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     '& > *': {
       margin: theme.spacing(4),
@@ -45,6 +46,10 @@ const useStyles = makeStyles(theme => ({
   avatar: {
     height: 125,
     width: 125,
+    [theme.breakpoints.down('sm')]: {
+      height: 75,
+      width: 75,
+    },
   },
   table: {
     minWidth: '35vw',
@@ -125,49 +130,59 @@ export default function ProfilePage() {
             {user.name}
           </Typography>
         </Box>
+
+        <Typography variant='h4'>
+          Your Saved Servers
+        </Typography>
         <Box display='flex' justifyContent='center' alignItems='center'>
-          {servers.allServers.length ? (
-            <TableContainer component={Paper}>
-              <Table className={classes.table} aria-label='list of players'>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Alias</TableCell>
-                    <TableCell align='center'>Edit</TableCell>
-                    <TableCell align='center'>Delete</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {servers.allServers.map(server => (
-                    <TableRow key={server.ip}>
-                      <TableCell component='th' scope='row'>
-                        {server.hostname}
-                      </TableCell>
-                      <TableCell align='center'>
-                        <Tooltip title='Edit Details'>
-                          <IconButton
-                            onClick={() => handleEditServerOpen(server)}
-                          >
-                            <EditIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell align='center'>
-                        <Tooltip title='Remove Server'>
-                          <IconButton
-                            onClick={() => handleDeleteServerOpen(server)}
-                          >
-                            <DeleteIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
+          {servers.loadingAllServers && <CircularProgress size={50} />}
+
+          {!servers.loadingAllServers && !servers.allServers.length && (
             <Typography variant='h5'>No saved servers!</Typography>
           )}
+
+          {!servers.loadingAllServers &&
+            !servers.allServersError &&
+            !!servers.allServers.length && (
+              <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label='list of players'>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Alias</TableCell>
+                      <TableCell align='center'>Edit</TableCell>
+                      <TableCell align='center'>Delete</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {servers.allServers.map(server => (
+                      <TableRow key={server.ip}>
+                        <TableCell component='th' scope='row'>
+                          {server.hostname}
+                        </TableCell>
+                        <TableCell align='center'>
+                          <Tooltip title='Edit Details'>
+                            <IconButton
+                              onClick={() => handleEditServerOpen(server)}
+                            >
+                              <EditIcon fontSize='small' />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                        <TableCell align='center'>
+                          <Tooltip title='Remove Server'>
+                            <IconButton
+                              onClick={() => handleDeleteServerOpen(server)}
+                            >
+                              <DeleteIcon fontSize='small' />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
         </Box>
       </Container>
 
