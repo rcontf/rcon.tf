@@ -84,7 +84,7 @@ export default function ServerPage() {
   });
 
   return (
-    <Layout>
+    <Layout title="Servers | rcon.tf">
       <Container className={classes.root}>
         <Grid
           container

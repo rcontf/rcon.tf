@@ -186,7 +186,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <Layout>
+    <Layout title="Dashboard | rcon.tf">
       <Container className={classes.root}>
         <Grid container justify='center' alignItems='center' direction='column'>
           <Box

@@ -1,15 +1,15 @@
 import React, { lazy } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
-import { CssBaseline } from '@material-ui/core';
+import { CircularProgress, CssBaseline, Box } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import getTheme from './themes/theme';
-import Loader from './components/Loader';
-import { AuthProvider } from "./contexts/UserContext";
+import { AuthProvider } from './contexts/UserContext';
 
 //Routes
 import HomePage from './pages/HomePage';
 import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layouts/Layout';
 
 const ServerPage = lazy(
   () => import(/* webpackChunkName: "server-page" */ './pages/ServerPage')
@@ -30,8 +30,21 @@ function App() {
     <AuthProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <React.Suspense fallback={<Loader />}>
-          <Router>
+        <Router>
+          <React.Suspense
+            fallback={
+              <Layout>
+                <Box
+                  display='flex'
+                  justifyContent='center'
+                  alignItems='center'
+                  height='70vh'
+                >
+                  <CircularProgress size={100} />
+                </Box>
+              </Layout>
+            }
+          >
             <Switch>
               <Route exact path='/' component={HomePage} />
               <ProtectedRoute path='/servers'>
@@ -45,8 +58,8 @@ function App() {
               </ProtectedRoute>
               <Route path='*' component={HomePage} />
             </Switch>
-          </Router>
-        </React.Suspense>
+          </React.Suspense>
+        </Router>
       </ThemeProvider>
     </AuthProvider>
   );
