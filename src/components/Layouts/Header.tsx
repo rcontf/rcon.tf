@@ -98,6 +98,7 @@ export default function Header({ login, logout }: HeaderProps) {
                   vertical: 'top',
                   horizontal: 'right',
                 }}
+                disableScrollLock={true}
               >
                 <MenuItem>
                   <Link to='/' className={classes.menuLink}>
