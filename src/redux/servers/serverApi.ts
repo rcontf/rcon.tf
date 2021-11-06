@@ -6,7 +6,7 @@ export async function getUserServers() {
   try {
     const { data } = await axios.get<GetServerResponse[]>('/api/servers');
     return data;
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(err.response.data.message);
   }
 }
@@ -17,7 +17,7 @@ export async function addUserServer(
   try {
     const { data } = await axios.post('/api/servers', dto);
     return data;
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(err.response.data.message);
   }
 }
@@ -25,7 +25,7 @@ export async function addUserServer(
 export async function deleteUserServer(ip: string): Promise<void> {
   try {
     await axios.delete(`/api/servers/${ip}`);
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(err.response.data.message);
   }
 }
@@ -40,7 +40,7 @@ export async function editUserServer(
       dto
     );
     return data;
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(err.response.data.message);
   }
 }
